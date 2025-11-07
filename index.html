@@ -49,36 +49,42 @@
                     <p id="statusMensagem" class="alert"></p>
 
                     
-                    <div id="alertaCadastro" class="alert-info" style="display:none;">
-                        O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Preencha o cadastro.
-                    </div>
+                    <div id="blocoCadastro" style="display:none;" class="card">
+                        <div id="alertaCadastro" class="alert-info">
+                            O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado na **Página1**. Por favor, cadastre-o.
+                        </div>
 
-                    
-                    <form id="cadastroForm" style="display:none;" class="card">
-                        <h2>Cadastro Rápido de Novo Cliente</h2>
-                        <input type="hidden" name="action" value="cadastrarPaciente">
-                        
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="cNome">Nome Completo:</label>
-                                <input type="text" name="nome" id="cNome" required>
+                        <form id="cadastroForm">
+                            <h2>Cadastro Rápido de Novo Cliente</h2>
+                            <input type="hidden" name="action" value="cadastrarPaciente">
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="cNome">Nome Completo:</label>
+                                    <input type="text" name="nome" id="cNome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cCPF">CPF:</label>
+                                    <input type="text" name="cpf" id="cCPF" required readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cTratamento">Tratamento/Especialidade:</label>
+                                    <input type="text" name="tratamento" id="cTratamento" placeholder="Ex: TEA, Ansiedade">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cPreco">Preço da Sessão (R$):</label>
+                                    <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="cCPF">CPF:</label>
-                                <input type="text" name="cpf" id="cCPF" required readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="cPreco">Preço da Sessão (R$):</label>
-                                <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
-                            </div>
-                            </div>
-                        
-                        <button type="submit" class="btn-primary">Finalizar Cadastro</button>
-                    </form>
+                            
+                            <button type="submit" class="btn-primary">Finalizar Cadastro</button>
+                        </form>
+                    </div>
 
 
                     
                     <div id="dadosPaciente" style="display:none;" class="card">
+                        
                         <h2>Informações do Cliente</h2>
                         
                         <div class="summary-grid">
