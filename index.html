@@ -3,115 +3,283 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consulta de Pacientes</title>
+  <title>Sistema de Pacientes</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      padding: 30px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #eef4f8; /* Fundo mais suave */
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
     }
-    h1 { text-align: center; color: #333; }
-    form, .dados {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      max-width: 600px;
+    .container {
+      max-width: 800px;
       margin: 20px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
     }
-    h2, h3 { color: #007bff; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 25px; }
-    label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
-    input, textarea, button {
-      width: 100%;
+    h1, h2, h3 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+    h2 {
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+      margin-top: 30px;
+      color: #34495e;
+    }
+    h3 {
+      color: #2980b9;
+      margin-top: 25px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: calc(100% - 22px); /* Ajusta para padding e borda */
       padding: 10px;
-      margin-top: 5px;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
+      font-size: 1em;
     }
     button {
-      background: #28a745; /* Cor verde para ação de salvar */
+      background: #3498db; /* Azul primário */
       color: white;
+      padding: 12px 20px;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
-      margin-top: 20px;
-      transition: background 0.3s;
+      font-size: 1.1em;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #2980b9; /* Azul mais escuro no hover */
+    }
+    #top-buttons {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #top-buttons button {
+      margin: 0 10px;
+      background: #2ecc71; /* Verde para 'Ver Pacientes' */
+    }
+    #top-buttons button:hover {
+      background: #27ae60;
+    }
+    #buscaForm {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      margin-bottom: 30px;
+    }
+    #buscaForm input {
+      flex-grow: 1;
+      margin-top: 0;
     }
     #buscaForm button {
-      background: #007bff; /* Cor azul para ação de buscar */
+      flex-shrink: 0;
+      margin-top: 0;
+      background: #3498db;
     }
-    button:hover { background: #0056b3; }
-    .historico { background: #f8f9fa; padding: 15px; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
-    .historico p { margin: 5px 0; border-bottom: 1px dotted #ccc; padding-bottom: 5px; }
-    .historico p:last-child { border-bottom: none; }
-    #mensagem { margin-top: 15px; font-weight: bold; }
+    .dados-paciente p {
+      background: #f9f9f9;
+      padding: 10px 15px;
+      border-radius: 5px;
+      margin-bottom: 8px;
+      border-left: 4px solid #3498db;
+    }
+    .historico {
+      background: #f2f7fb;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #dce4e8;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .historico p {
+      margin: 8px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #cfd8dc;
+    }
+    .historico p:last-child {
+      border-bottom: none;
+    }
+    #mensagem {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    #mensagem.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    #mensagem.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .checkbox-group input {
+      width: auto;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    #listaPacientesContainer {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 20px auto;
+      display: none; /* Escondido por padrão */
+    }
+    #listaPacientesContainer ul {
+      list-style: none;
+      padding: 0;
+    }
+    #listaPacientesContainer li {
+      background: #f9f9f9;
+      margin-bottom: 8px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      border-left: 4px solid #2ecc71;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #listaPacientesContainer li:hover {
+      background: #e8f5e9;
+    }
   </style>
 </head>
 <body>
-  <h1>Consulta e Cadastro de Pacientes</h1>
+  <div class="container">
+    <h1>Sistema de Gerenciamento de Pacientes</h1>
 
-  <form id="buscaForm">
-    <label>Buscar paciente pelo nome:</label>
-    <input type="text" id="buscaNome" required placeholder="Digite o nome completo">
-    <button type="submit">Buscar</button>
-  </form>
+    <div id="top-buttons">
+      <button id="btnVerPacientes">Ver Todos os Pacientes</button>
+    </div>
 
-  <div id="dadosPaciente" class="dados" style="display:none;">
-    <h2>Dados do Paciente</h2>
-    <p><b>Nome:</b> <span id="pNome"></span></p>
-    <p><b>CPF:</b> <span id="pCPF"></span></p>
-    <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
-    <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
-    <p><b>Sessões neste mês:</b> <span id="pSessoes"></span></p>
-    <p><b>Total no mês:</b> R$ <span id="pTotal"></span></p>
-
-    <h3>Histórico de Sessões</h3>
-    <div id="pHistorico" class="historico"></div>
-
-    <h3>Registrar Nova Sessão</h3>
-    <form id="novaSessao">
-      <input type="hidden" name="nome" id="nNome">
-      <input type="hidden" name="cpf" id="nCPF">
-      <input type="hidden" name="data_nascimento" id="nNasc">
-      <input type="hidden" name="tratamento" id="nTrat">
-      <input type="hidden" name="preco" id="nPreco">
-
-      <label>Data da Sessão:</label>
-      <input type="date" name="data_sessao" required>
-
-      <label>Anotação (Opcional):</label>
-      <textarea name="anotacao" rows="3" placeholder="Anotações da sessão..."></textarea>
-
-      <button type="submit">Salvar Sessão</button>
+    <form id="buscaForm">
+      <div class="form-group">
+        <label for="buscaNome">Buscar paciente pelo nome:</label>
+        <input type="text" id="buscaNome" required placeholder="Ex: Nome Completo do Paciente">
+      </div>
+      <button type="submit">Buscar Paciente</button>
     </form>
-    <p id="mensagem"></p>
+
+    <div id="dadosPaciente" class="dados-paciente" style="display:none;">
+      <h2>Dados do Paciente</h2>
+      <p><b>Nome:</b> <span id="pNome"></span></p>
+      <p><b>CPF:</b> <span id="pCPF"></span></p>
+      <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
+      <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
+      <p><b>Sessões neste mês:</b> <span id="pSessoes"></span></p>
+      <p><b>Total no mês:</b> R$ <span id="pTotal"></span></p>
+
+      <h3>Histórico de Sessões</h3>
+      <div id="pHistorico" class="historico"></div>
+
+      <h3>Registrar Nova Sessão</h3>
+      <form id="novaSessao">
+        <input type="hidden" name="nome" id="nNome">
+        <input type="hidden" name="cpf" id="nCPF">
+        <input type="hidden" name="data_nascimento" id="nNasc">
+        <input type="hidden" name="tratamento" id="nTrat">
+        <input type="hidden" name="preco" id="nPreco">
+
+        <div class="form-group">
+          <label for="data_sessao">Data da Sessão:</label>
+          <input type="date" name="data_sessao" id="data_sessao" required>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" name="compareceu" id="compareceu" value="Sim">
+          <label for="compareceu">Paciente Compareceu à Consulta?</label>
+        </div>
+
+        <div class="form-group">
+          <label for="anotacao">Anotação (Opcional):</label>
+          <textarea name="anotacao" id="anotacao" rows="3" placeholder="Anotações da sessão..."></textarea>
+        </div>
+
+        <button type="submit">Salvar Sessão</button>
+      </form>
+      <p id="mensagem" class=""></p>
+    </div>
+
+    <div id="listaPacientesContainer" style="display:none;">
+      <h2>Todos os Pacientes Cadastrados</h2>
+      <ul id="listaPacientes">
+              </ul>
+    </div>
   </div>
 
   <script>
-    // LINK FINAL DO SEU GOOGLE APPS SCRIPT
+    // SEU LINK FINAL DO GOOGLE APPS SCRIPT
     const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
-    // Função para buscar paciente
-    document.getElementById("buscaForm").addEventListener("submit", async e => {
+    const buscaForm = document.getElementById("buscaForm");
+    const dadosPacienteDiv = document.getElementById("dadosPaciente");
+    const novaSessaoForm = document.getElementById("novaSessao");
+    const mensagemP = document.getElementById("mensagem");
+    const btnVerPacientes = document.getElementById("btnVerPacientes");
+    const listaPacientesContainer = document.getElementById("listaPacientesContainer");
+    const listaPacientesUl = document.getElementById("listaPacientes");
+
+    // Função auxiliar para exibir mensagens
+    function showMessage(msg, type) {
+      mensagemP.textContent = msg;
+      mensagemP.className = type;
+      setTimeout(() => {
+        mensagemP.textContent = "";
+        mensagemP.className = "";
+      }, 5000);
+    }
+
+    // Buscar paciente
+    buscaForm.addEventListener("submit", async e => {
       e.preventDefault();
       const nome = document.getElementById("buscaNome").value.trim();
-      if (!nome) return;
+      if (!nome) {
+        showMessage("Por favor, digite o nome do paciente para buscar.", "error");
+        return;
+      }
 
-      document.getElementById("dadosPaciente").style.display = "none";
-      document.getElementById("pHistorico").innerHTML = "Buscando...";
+      dadosPacienteDiv.style.display = "none";
+      listaPacientesContainer.style.display = "none";
+      document.getElementById("pHistorico").innerHTML = "<p>Buscando paciente...</p>";
+      showMessage("Buscando paciente...", "");
 
       try {
-        const res = await fetch(`${scriptURL}?nome=${encodeURIComponent(nome)}`);
+        const res = await fetch(`${scriptURL}?action=buscarPaciente&nome=${encodeURIComponent(nome)}`);
         const dados = await res.json();
 
         if (dados.erro) {
-          alert(dados.erro);
+          showMessage(dados.erro, "error");
           document.getElementById("pHistorico").innerHTML = "";
           return;
         }
 
         const p = dados.paciente;
-        document.getElementById("dadosPaciente").style.display = "block";
+        dadosPacienteDiv.style.display = "block";
         document.getElementById("pNome").textContent = p.nome;
         document.getElementById("pCPF").textContent = p.cpf;
         document.getElementById("pTratamento").textContent = p.tratamento;
@@ -119,55 +287,110 @@
         document.getElementById("pSessoes").textContent = dados.sessoesNoMes;
         document.getElementById("pTotal").textContent = parseFloat(dados.totalMes).toFixed(2);
 
-        // Preencher campos escondidos para o formulário de nova sessão
         document.getElementById("nNome").value = p.nome;
         document.getElementById("nCPF").value = p.cpf;
         document.getElementById("nNasc").value = p.data_nascimento;
         document.getElementById("nTrat").value = p.tratamento;
         document.getElementById("nPreco").value = p.preco;
+        document.getElementById("data_sessao").valueAsDate = new Date(); // Preenche com data atual
+        document.getElementById("compareceu").checked = false;
+        document.getElementById("anotacao").value = "";
+        
 
-        // Montar Histórico
         const historicoHTML = dados.historico.map(h => 
-          `<p><b>${h.data_sessao}</b>: ${h.anotacao || "(sem anotação)"}</p>`
+          `<p><b>${h.data_sessao}</b> - Compareceu: <i>${h.compareceu || "Não informado"}</i><br>${h.anotacao || "(sem anotação)"}</p>`
         ).join("");
-        document.getElementById("pHistorico").innerHTML = historicoHTML || "<p>Nenhum histórico encontrado.</p>";
+        document.getElementById("pHistorico").innerHTML = historicoHTML || "<p>Nenhum histórico encontrado para este paciente.</p>";
+        showMessage("Paciente encontrado!", "success");
+
       } catch (error) {
-        alert("Erro ao conectar com o servidor.");
+        showMessage("Erro ao conectar com o servidor para buscar paciente.", "error");
+        console.error("Erro na busca:", error);
         document.getElementById("pHistorico").innerHTML = "";
       }
     });
 
-    // Função para salvar nova sessão
-    document.getElementById("novaSessao").addEventListener("submit", async e => {
+    // Salvar nova sessão
+    novaSessaoForm.addEventListener("submit", async e => {
       e.preventDefault();
       const form = e.target;
       const formData = new FormData(form);
-      formData.append("acao", "registrarSessao"); // Nome da ação para o Apps Script
+      formData.append("action", "registrarSessao"); // Nome da ação para o Apps Script
+      formData.append("dataRegistro", new Date().toLocaleString("pt-BR")); // Data e hora do registro
 
-      const msg = document.getElementById("mensagem");
-      msg.textContent = "Enviando...";
-      msg.style.color = "blue";
+      showMessage("Registrando sessão...", "");
 
       try {
         const res = await fetch(scriptURL, { method: "POST", body: formData });
         if (res.ok) {
           const result = await res.json();
           if (result.sucesso) {
-            msg.textContent = "Sessão registrada com sucesso!";
-            msg.style.color = "green";
+            showMessage("Sessão registrada com sucesso!", "success");
             form.reset();
+            // Recarregar dados do paciente após salvar sessão
+            buscaForm.dispatchEvent(new Event('submit'));
           } else {
-            msg.textContent = result.erro || "Erro desconhecido ao registrar sessão.";
-            msg.style.color = "red";
+            showMessage(result.erro || "Erro desconhecido ao registrar sessão.", "error");
           }
         } else {
-          msg.textContent = "Erro de conexão com o servidor.";
-          msg.style.color = "red";
+          showMessage("Erro de conexão com o servidor ao registrar sessão.", "error");
         }
       } catch (error) {
-        msg.textContent = "Falha na comunicação de rede.";
-        msg.style.color = "red";
+        showMessage("Falha na comunicação de rede ao registrar sessão.", "error");
+        console.error("Erro no registro:", error);
       }
+    });
+
+    // Ver todos os pacientes
+    btnVerPacientes.addEventListener("click", async () => {
+      dadosPacienteDiv.style.display = "none";
+      listaPacientesContainer.style.display = "block";
+      listaPacientesUl.innerHTML = "<li>Carregando pacientes...</li>";
+      showMessage("Carregando lista de pacientes...", "");
+
+      try {
+        const res = await fetch(`${scriptURL}?action=listarPacientes`);
+        const dados = await res.json();
+
+        if (dados.erro) {
+          showMessage(dados.erro, "error");
+          listaPacientesUl.innerHTML = "";
+          return;
+        }
+
+        if (dados.pacientes && dados.pacientes.length > 0) {
+          listaPacientesUl.innerHTML = dados.pacientes.map(p => 
+            `<li data-nome="${p.nome}">${p.nome} (CPF: ${p.cpf})</li>`
+          ).join("");
+          showMessage("Lista de pacientes carregada.", "success");
+        } else {
+          listaPacientesUl.innerHTML = "<li>Nenhum paciente cadastrado.</li>";
+          showMessage("Nenhum paciente cadastrado.", "info");
+        }
+      } catch (error) {
+        showMessage("Erro ao carregar lista de pacientes.", "error");
+        console.error("Erro na lista:", error);
+        listaPacientesUl.innerHTML = "";
+      }
+    });
+
+    // Clicar em um paciente da lista para buscar
+    listaPacientesUl.addEventListener("click", e => {
+      if (e.target.tagName === 'LI') {
+        const nomePaciente = e.target.dataset.nome;
+        document.getElementById("buscaNome").value = nomePaciente;
+        buscaForm.dispatchEvent(new Event('submit')); // Dispara a busca
+        listaPacientesContainer.style.display = "none"; // Esconde a lista
+      }
+    });
+
+    // Ajustar a data da sessão para hoje por padrão
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      document.getElementById("data_sessao").value = `${year}-${month}-${day}`;
     });
   </script>
 </body>
