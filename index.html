@@ -20,11 +20,11 @@
             background-color: var(--cor-fundo);
             margin: 0;
             padding: 0;
-            display: flex; /* Habilita o layout de colunas */
+            display: flex;
             min-height: 100vh;
         }
 
-        /* --- Menu Lateral (Inspirado no Painel) --- */
+        /* --- Menu Lateral (Sidebar) --- */
         .sidebar {
             width: 200px;
             background-color: var(--cor-secundaria);
@@ -48,11 +48,12 @@
             color: #dcdde1;
             transition: background 0.3s, color 0.3s;
             border-left: 5px solid transparent;
+            cursor: pointer; /* Adicionado para indicar que é clicável */
         }
         .sidebar a:hover, .sidebar a.active {
-            background-color: #34495e; /* Fundo mais escuro */
+            background-color: #34495e;
             color: white;
-            border-left: 5px solid var(--cor-principal); /* Borda ativa */
+            border-left: 5px solid var(--cor-principal);
         }
         .sidebar a::before {
             content: "•";
@@ -60,9 +61,9 @@
             color: var(--cor-principal);
         }
 
-        /* --- Conteúdo Principal (Onde tudo aparece) --- */
+        /* --- Conteúdo Principal e Views --- */
         .content {
-            margin-left: 200px; /* Compensa o menu lateral */
+            margin-left: 200px;
             padding: 40px;
             flex-grow: 1;
         }
@@ -76,8 +77,6 @@
             margin: 0;
             color: var(--cor-secundaria);
         }
-
-        /* --- Card Principal (Busca e Conteúdo) --- */
         .card {
             background-color: var(--cor-fundo-card);
             padding: 30px;
@@ -86,7 +85,7 @@
             margin-bottom: 30px;
         }
         
-        /* --- Elementos de Formulário (Inspirado em image_8529b2.png) --- */
+        /* --- Elementos de Formulário --- */
         h2 {
             color: var(--cor-principal);
             border-bottom: 2px solid #ecf0f1;
@@ -111,11 +110,6 @@
             font-size: 1em;
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        input:focus, textarea:focus, select:focus {
-            border-color: var(--cor-principal);
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-            outline: none;
-        }
         button {
             background: var(--cor-principal);
             color: white;
@@ -129,8 +123,6 @@
         button:hover {
             background: #2980b9;
         }
-
-        /* --- Estilo Específico de Busca --- */
         #buscaForm {
             display: flex;
             gap: 10px;
@@ -144,11 +136,6 @@
             background: var(--cor-sucesso);
             margin-left: 10px;
         }
-        #top-buttons button:hover {
-            background: #27ae60;
-        }
-
-        /* --- Status/Mensagens --- */
         .alert {
             margin-top: 15px;
             padding: 15px;
@@ -176,14 +163,6 @@
             max-height: 250px;
             overflow-y: auto;
         }
-        .historico p {
-            margin: 8px 0;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #cfd8dc;
-        }
-        .historico p:last-child {
-            border-bottom: none;
-        }
         #listaPacientes li {
             background: #ecf0f1;
             margin-bottom: 8px;
@@ -194,8 +173,20 @@
             list-style: none;
             transition: background 0.2s;
         }
-        #listaPacientes li:hover {
-            background: #d4edda;
+        
+        /* --- Estilo de Conteúdo Vazio para Agenda/Relatórios --- */
+        .placeholder {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            color: #95a5a6;
+        }
+        .placeholder h3 {
+            color: #7f8c8d;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -203,111 +194,130 @@
 
     <div class="sidebar">
         <h2>PSICO MANAGER</h2>
-        <a href="#" class="active">Clientes/Busca</a>
-        <a href="#" onclick="alert('Funcionalidade não implementada (agenda)'); return false;">Agenda</a>
-        <a href="#" onclick="alert('Funcionalidade não implementada (relatórios)'); return false;">Relatórios</a>
+        <a id="navClientes" class="active" data-view="clientes">Clientes/Busca</a>
+        <a id="navAgenda" data-view="agenda">Agenda</a>
+        <a id="navRelatorios" data-view="relatorios">Relatórios</a>
     </div>
 
     <div class="content">
 
         <div class="header">
-            <h1>Gerenciamento de Consultas</h1>
+            <h1 id="mainTitle">Gerenciamento de Clientes</h1>
             <div id="top-buttons">
-                <button id="btnVerPacientes">Ver Todos os Pacientes</button>
+                <button id="btnVerPacientes">Ver Todos os Clientes</button>
             </div>
         </div>
 
         <div class="card">
             
-            <form id="buscaForm">
-                <div class="form-group">
-                    <label for="buscaCpf">Buscar paciente pelo **CPF**:</label>
-                    <input type="text" id="buscaCpf" required placeholder="Digite o CPF (somente números)">
-                </div>
-                <button type="submit">Buscar Cliente</button>
-            </form>
-            
-            <p id="statusMensagem" class="alert"></p>
-
-            <div id="alertaCadastro" class="alert-info" style="display:none;">
-                O paciente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha os dados abaixo.
-            </div>
-
-            <form id="cadastroForm" style="display:none;" class="card">
-                <h2>Cadastrar Novo Paciente</h2>
-                <input type="hidden" name="action" value="cadastrarPaciente">
+            <div id="viewClientes" class="view-content">
                 
-                <div class="form-group">
-                    <label for="cNome">Nome Completo:</label>
-                    <input type="text" name="nome" id="cNome" required>
-                </div>
-                <div class="form-group">
-                    <label for="cCPF">CPF:</label>
-                    <input type="text" name="cpf" id="cCPF" required readonly>
-                </div>
-                <div class="form-group">
-                    <label for="cNasc">Data de Nascimento:</label>
-                    <input type="date" name="data_nascimento" id="cNasc" required>
-                </div>
-                <div class="form-group">
-                    <label for="cTratamento">Tratamento/Condição:</label>
-                    <input type="text" name="tratamento" id="cTratamento" required>
-                </div>
-                <div class="form-group">
-                    <label for="cPreco">Preço da Sessão (R$):</label>
-                    <input type="number" name="preco" id="cPreco" step="0.01" min="0" required>
-                </div>
+                <form id="buscaForm">
+                    <div class="form-group">
+                        <label for="buscaCpf">Buscar cliente pelo **CPF**:</label>
+                        <input type="text" id="buscaCpf" required placeholder="Digite o CPF (somente números)">
+                    </div>
+                    <button type="submit">Buscar Cliente</button>
+                </form>
                 
-                <button type="submit">Finalizar Cadastro</button>
-            </form>
+                <p id="statusMensagem" class="alert"></p>
 
-
-            <div id="dadosPaciente" style="display:none;" class="card">
-                <h2>Informações do Cliente</h2>
-                <div class="dados-paciente">
-                    <p><b>Nome:</b> <span id="pNome"></span></p>
-                    <p><b>CPF:</b> <span id="pCPF"></span></p>
-                    <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
-                    <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
-                    <p><b>Sessões neste mês:</b> <span id="pSessoes"></span> | <b>Total no mês:</b> R$ <span id="pTotal"></span></p>
+                <div id="alertaCadastro" class="alert-info" style="display:none;">
+                    O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha os dados abaixo.
                 </div>
 
-                <h3>Histórico de Sessões</h3>
-                <div id="pHistorico" class="historico"></div>
-
-                <h3>Registrar Nova Sessão</h3>
-                <form id="novaSessao">
-                    <input type="hidden" name="action" value="registrarSessao">
-                    <input type="hidden" name="cpf" id="nCPF">
+                <form id="cadastroForm" style="display:none;" class="card">
+                    <h2>Cadastrar Novo Cliente</h2>
+                    <input type="hidden" name="action" value="cadastrarPaciente">
                     
                     <div class="form-group">
-                        <label for="data_sessao">Data da Sessão:</label>
-                        <input type="date" name="data_sessao" id="data_sessao" required>
+                        <label for="cNome">Nome Completo:</label>
+                        <input type="text" name="nome" id="cNome" required>
                     </div>
-
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" name="compareceu" id="compareceu" value="Sim">
-                        <label for="compareceu">O Cliente **Compareceu** à Consulta?</label>
-                    </div>
-
                     <div class="form-group">
-                        <label for="anotacao">Anotação da Sessão (Opcional):</label>
-                        <textarea name="anotacao" id="anotacao" rows="3" placeholder="Anotações, evolução, próxima etapa..."></textarea>
+                        <label for="cCPF">CPF:</label>
+                        <input type="text" name="cpf" id="cCPF" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="cNasc">Data de Nascimento:</label>
+                        <input type="date" name="data_nascimento" id="cNasc" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cTratamento">Tratamento/Condição:</label>
+                        <input type="text" name="tratamento" id="cTratamento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cPreco">Preço da Sessão (R$):</label>
+                        <input type="number" name="preco" id="cPreco" step="0.01" min="0" required>
+                    </div>
+                    
+                    <button type="submit">Finalizar Cadastro</button>
+                </form>
+
+
+                <div id="dadosPaciente" style="display:none;" class="card">
+                    <h2>Informações do Cliente</h2>
+                    <div class="dados-paciente">
+                        <p><b>Nome:</b> <span id="pNome"></span></p>
+                        <p><b>CPF:</b> <span id="pCPF"></span></p>
+                        <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
+                        <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
+                        <p><b>Sessões neste mês:</b> <span id="pSessoes"></span> | <b>Total no mês:</b> R$ <span id="pTotal"></span></p>
                     </div>
 
-                    <button type="submit">Salvar Sessão e Histórico</button>
-                </form>
+                    <h3>Histórico de Sessões</h3>
+                    <div id="pHistorico" class="historico"></div>
+
+                    <h3>Registrar Nova Sessão</h3>
+                    <form id="novaSessao">
+                        <input type="hidden" name="action" value="registrarSessao">
+                        <input type="hidden" name="cpf" id="nCPF">
+                        
+                        <div class="form-group">
+                            <label for="data_sessao">Data da Sessão:</label>
+                            <input type="date" name="data_sessao" id="data_sessao" required>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" name="compareceu" id="compareceu" value="Sim">
+                            <label for="compareceu">O Cliente **Compareceu** à Consulta?</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="anotacao">Anotação da Sessão (Opcional):</label>
+                            <textarea name="anotacao" id="anotacao" rows="3" placeholder="Anotações, evolução, próxima etapa..."></textarea>
+                        </div>
+
+                        <button type="submit">Salvar Sessão e Histórico</button>
+                    </form>
+                </div>
+
+                <div id="listaPacientesContainer" style="display:none;" class="card">
+                    <h2>Lista de Clientes Cadastrados</h2>
+                    <ul id="listaPacientes"></ul>
+                </div>
+
+            </div> <div id="viewAgenda" class="view-content" style="display:none;">
+                <h2>Agenda e Próximos Compromissos</h2>
+                <div class="placeholder">
+                    <h3>Funcionalidade em Construção</h3>
+                    <p>Esta área será usada para listar as sessões agendadas ou próximas consultas.</p>
+                </div>
             </div>
 
-            <div id="listaPacientesContainer" style="display:none;" class="card">
-                <h2>Lista de Clientes Cadastrados</h2>
-                <ul id="listaPacientes"></ul>
+            <div id="viewRelatorios" class="view-content" style="display:none;">
+                <h2>Relatórios e Resumo Mensal</h2>
+                <div class="placeholder">
+                    <h3>Funcionalidade em Construção</h3>
+                    <p>Aqui você poderá ver relatórios financeiros, frequência de pacientes e resumos de atividades.</p>
+                </div>
             </div>
 
         </div> </div> <script>
         // SEU LINK FINAL DO GOOGLE APPS SCRIPT
         const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
+        // Variáveis de Elementos DOM
         const buscaForm = document.getElementById("buscaForm");
         const dadosPacienteDiv = document.getElementById("dadosPaciente");
         const novaSessaoForm = document.getElementById("novaSessao");
@@ -317,8 +327,45 @@
         const btnVerPacientes = document.getElementById("btnVerPacientes");
         const listaPacientesContainer = document.getElementById("listaPacientesContainer");
         const listaPacientesUl = document.getElementById("listaPacientes");
+        const mainTitle = document.getElementById("mainTitle");
+        const navLinks = document.querySelectorAll(".sidebar a");
+        const viewContents = document.querySelectorAll(".view-content");
 
-        // Função auxiliar para exibir mensagens de status
+        // --- FUNÇÕES DE NAVEGAÇÃO E VIEWS ---
+        
+        // Função para mostrar a view correta
+        function showView(viewId) {
+            viewContents.forEach(view => {
+                view.style.display = 'none';
+            });
+            document.getElementById(viewId).style.display = 'block';
+
+            // Atualiza o título e o estado do menu
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.view === viewId.replace('view', '').toLowerCase()) {
+                    link.classList.add('active');
+                    mainTitle.textContent = link.textContent.split("/")[0].trim();
+                }
+            });
+             // No caso de Clientes, ajusta o título
+            if (viewId === 'viewClientes') {
+                 mainTitle.textContent = 'Gerenciamento de Clientes';
+            }
+        }
+
+        // Adiciona evento de clique aos links de navegação
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showView('view' + link.dataset.view.charAt(0).toUpperCase() + link.dataset.view.slice(1));
+                resetForms(); // Limpa as mensagens/formulários ao trocar de view
+            });
+        });
+
+
+        // --- FUNÇÕES DE STATUS E UTILS ---
+
         function showStatus(msg, type) {
             statusMensagemP.textContent = msg;
             statusMensagemP.className = `alert alert-${type}`;
@@ -328,18 +375,27 @@
             }, 5000);
         }
 
-        // Função para limpar e esconder formulários
         function resetForms() {
             dadosPacienteDiv.style.display = "none";
             cadastroForm.style.display = "none";
             alertaCadastroDiv.style.display = "none";
             listaPacientesContainer.style.display = "none";
+            statusMensagemP.textContent = "";
+            statusMensagemP.className = "alert";
         }
 
+        // --- FUNÇÕES DE AÇÃO DE DADOS (Busca, Cadastro, Sessão, Lista) ---
+        // (O código JS de busca, cadastro, salvar sessão e ver pacientes é o mesmo que eu te passei anteriormente, 
+        // e é funcional dentro desta nova estrutura de views)
+        
+        // ... (Todo o código JS de Ação de Dados - Busca, Cadastro, Sessão, Lista - deve ser COLADO AQUI) ...
+
+        // --- INÍCIO DO CÓDIGO JS DE AÇÃO DE DADOS (COLE AQUI) ---
+        
         // BUSCA PRINCIPAL POR CPF
         buscaForm.addEventListener("submit", async e => {
             e.preventDefault();
-            const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, ''); // Limpa o CPF
+            const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, ''); 
             
             resetForms();
             
@@ -356,7 +412,6 @@
                 const dados = await res.json();
 
                 if (dados.erro === "Paciente não encontrado") {
-                    // CPF não encontrado, exibe formulário de cadastro
                     document.getElementById("cpfNaoEncontrado").textContent = cpf;
                     document.getElementById("cCPF").value = cpf;
                     alertaCadastroDiv.style.display = "block";
@@ -368,7 +423,6 @@
                     return;
                 }
 
-                // Cliente encontrado, exibe dados e formulário de sessão
                 const p = dados.paciente;
                 dadosPacienteDiv.style.display = "block";
                 document.getElementById("pNome").textContent = p.nome;
@@ -379,7 +433,7 @@
                 document.getElementById("pTotal").textContent = parseFloat(dados.totalMes || 0).toFixed(2);
 
                 document.getElementById("nCPF").value = p.cpf;
-                document.getElementById("data_sessao").valueAsDate = new Date(); // Data atual
+                document.getElementById("data_sessao").valueAsDate = new Date();
 
                 const historicoHTML = (dados.historico || []).map(h => 
                     `<p><b>Data: ${h.data_sessao}</b> | Compareceu: <i>${h.compareceu || "Não"}</i><br>Anotação: ${h.anotacao || "(sem anotação)"}</p>`
@@ -407,7 +461,6 @@
                 
                 if (result.sucesso) {
                     showStatus("Cliente cadastrado! Buscando dados...", "success");
-                    // Após cadastrar, faz a busca para abrir os dados e formulário de sessão
                     buscaForm.dispatchEvent(new Event('submit')); 
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao cadastrar cliente.", "error");
@@ -425,7 +478,6 @@
             const form = e.target;
             const formData = new FormData(form);
             
-            // Adiciona 'Não' se o checkbox não estiver marcado
             if (!formData.get('compareceu')) {
                 formData.set('compareceu', 'Não');
             }
@@ -438,7 +490,6 @@
                 
                 if (result.sucesso) {
                     showStatus("Sessão registrada com sucesso!", "success");
-                    // Recarrega os dados do paciente para atualizar o histórico
                     buscaForm.dispatchEvent(new Event('submit')); 
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao registrar sessão.", "error");
@@ -452,7 +503,10 @@
 
         // VER TODOS OS PACIENTES
         btnVerPacientes.addEventListener("click", async () => {
+            // Garante que estamos na view correta antes de listar
+            showView('viewClientes'); 
             resetForms();
+            
             listaPacientesContainer.style.display = "block";
             listaPacientesUl.innerHTML = "<li>Carregando clientes...</li>";
             showStatus("Carregando lista de clientes...", "info");
@@ -488,9 +542,11 @@
             if (e.target.tagName === 'LI') {
                 const cpfPaciente = e.target.dataset.cpf;
                 document.getElementById("buscaCpf").value = cpfPaciente;
-                buscaForm.dispatchEvent(new Event('submit')); // Dispara a busca
+                buscaForm.dispatchEvent(new Event('submit'));
             }
         });
+        
+        // --- FIM DO CÓDIGO JS DE AÇÃO DE DADOS (COLE AQUI) ---
     </script>
 </body>
 </html>
