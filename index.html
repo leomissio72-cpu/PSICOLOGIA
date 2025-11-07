@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PSICO MANAGER - Gerenciamento de Pacientes</title>
-
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
-    
+    <title>PSICO MANAGER - Gerenciamento de Pacientes e Relatórios</title>
     <style>
         /* --- Cores e Tipografia (Mantendo o Layout Profissional) --- */
         :root {
@@ -17,6 +14,7 @@
             --cor-borda: #dcdfe6;
             --cor-sucesso: #2ecc71; /* Verde */
             --cor-erro: #e74c3c; /* Vermelho */
+            --cor-aviso: #f39c12; /* Laranja */
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -95,6 +93,10 @@
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
+        h3 {
+             color: var(--cor-secundaria);
+             margin-top: 30px;
+        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -151,126 +153,125 @@
         .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
-        /* --- FullCalendar Style Adjustments --- */
-        #calendar {
-            max-width: 100%;
-            margin: 0 auto;
-            font-size: 0.9em;
-            /* Altura fixa para manter o layout */
-            height: 700px;
+        /* --- Dados do Paciente e Histórico --- */
+        .dados-paciente p {
+            background: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--cor-principal);
         }
-        .fc-toolbar-title {
-            color: var(--cor-secundaria);
+        .historico {
+            background: #fcfcfc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            max-height: 250px;
+            overflow-y: auto;
         }
-        .fc-event {
-            background-color: var(--cor-principal);
-            border: 1px solid #2980b9;
-            cursor: pointer;
-        }
-        .fc-daygrid-event-dot {
-            border-color: #fff !important;
-        }
-        .fc-event[data-type="block"] {
-            background-color: var(--cor-erro);
-            border: 1px solid #c0392b;
-        }
-        .fc-day-other {
-            opacity: 0.5;
+        .historico p {
+            margin: 8px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #cfd8dc;
+            font-size: 0.95em;
         }
         
-        /* --- Modal (Para Agendamento e Bloqueio) --- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
+        /* --- Estilo do Relatório --- */
+        .relatorio-summary {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .relatorio-item {
+            padding: 15px 30px;
+            background: var(--cor-principal);
+            color: white;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 10px;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .relatorio-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.5em;
         }
-        .close:hover, .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
+        .relatorio-item p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
         }
-        .modal button {
-            width: 100%;
-            margin-bottom: 10px;
+        .relatorio-item.total {
+             background: var(--cor-sucesso);
         }
-        #btnExcluir {
-            background-color: var(--cor-erro);
-        }
-        #btnExcluir:hover {
-            background-color: #c0392b;
-        }
+        
+        /* Oculta os placeholders da Agenda */
+        #viewAgenda, #viewRelatoriosPlaceholder { display: none; } 
     </style>
 </head>
 <body>
 
     <div class="sidebar">
         <h2>PSICO MANAGER</h2>
-        <a id="navClientes" data-view="clientes">Clientes/Busca</a>
-        <a id="navAgenda" class="active" data-view="agenda">Agenda</a>
+        <a id="navClientes" class="active" data-view="clientes">Clientes/Sessões</a>
         <a id="navRelatorios" data-view="relatorios">Relatórios</a>
     </div>
 
     <div class="content">
 
         <div class="header">
-            <h1 id="mainTitle">Agenda</h1>
+            <h1 id="mainTitle">Gerenciamento de Clientes e Sessões</h1>
             <div id="top-buttons">
-                </div>
+                <button id="btnVerPacientes" style="background: var(--cor-aviso);">Ver Todos os Clientes</button>
+            </div>
         </div>
 
         <div class="card">
             
-            <div id="viewClientes" class="view-content" style="display:none;">
+            <div id="viewClientes" class="view-content">
                 
                 <form id="buscaForm">
                     <div class="form-group">
-                        <label for="buscaCpf">Buscar cliente pelo **CPF**:</label>
-                        <input type="text" id="buscaCpf" required placeholder="Digite o CPF (somente números)">
+                        <label for="buscaCpf">Buscar cliente pelo **CPF** (somente números):</label>
+                        <input type="text" id="buscaCpf" required placeholder="Digite o CPF">
                     </div>
                     <button type="submit">Buscar Cliente</button>
                 </form>
                 
-                <p id="statusMensagemClientes" class="alert"></p>
+                <p id="statusMensagem" class="alert"></p>
 
                 <div id="alertaCadastro" class="alert-info" style="display:none;">
-                    O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha os dados abaixo.
+                    O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha o cadastro.
                 </div>
 
                 <form id="cadastroForm" style="display:none;" class="card">
-                    <h2>Cadastrar Novo Cliente</h2>
+                    <h2>Cadastro Rápido de Novo Cliente</h2>
                     <input type="hidden" name="action" value="cadastrarPaciente">
                     
-                    <div class="form-group"><label for="cNome">Nome Completo:</label><input type="text" name="nome" id="cNome" required></div>
-                    <div class="form-group"><label for="cCPF">CPF:</label><input type="text" name="cpf" id="cCPF" required readonly></div>
-                    <div class="form-group"><label for="cNasc">Data de Nascimento:</label><input type="date" name="data_nascimento" id="cNasc" required></div>
-                    <div class="form-group"><label for="cTratamento">Tratamento/Condição:</label><input type="text" name="tratamento" id="cTratamento" required></div>
-                    <div class="form-group"><label for="cPreco">Preço da Sessão (R$):</label><input type="number" name="preco" id="cPreco" step="0.01" min="0" required></div>
+                    <div class="form-group">
+                        <label for="cNome">Nome Completo:</label>
+                        <input type="text" name="nome" id="cNome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cCPF">CPF:</label>
+                        <input type="text" name="cpf" id="cCPF" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="cPreco">Preço da Sessão (R$):</label>
+                        <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
+                    </div>
+                    <div class="form-group" style="display:none;">
+                        <label for="cNasc">Data de Nascimento:</label>
+                        <input type="date" name="data_nascimento" id="cNasc">
+                    </div>
+                    <div class="form-group" style="display:none;">
+                        <label for="cTratamento">Tratamento/Condição:</label>
+                        <input type="text" name="tratamento" id="cTratamento">
+                    </div>
                     
-                    <button type="submit">Finalizar Cadastro</button>
+                    <button type="submit">Finalizar Cadastro e Registrar Sessão</button>
                 </form>
+
 
                 <div id="dadosPaciente" style="display:none;" class="card">
                     <h2>Informações do Cliente</h2>
@@ -279,79 +280,84 @@
                         <p><b>CPF:</b> <span id="pCPF"></span></p>
                         <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
                         <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
-                        <p><b>Sessões neste mês:</b> <span id="pSessoes"></span> | <b>Total no mês:</b> R$ <span id="pTotal"></span></p>
+                        <div class="relatorio-summary">
+                            <div class="relatorio-item">
+                                <h4><span id="pSessoesTotal">0</span></h4>
+                                <p>Total de Sessões</p>
+                            </div>
+                            <div class="relatorio-item total">
+                                <h4>R$ <span id="pTotalGeral">0.00</span></h4>
+                                <p>Total Faturado</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <h3>Histórico de Sessões</h3>
-                    <div id="pHistorico" class="historico"></div>
-
+                    
                     <h3>Registrar Nova Sessão</h3>
                     <form id="novaSessao">
                         <input type="hidden" name="action" value="registrarSessao">
                         <input type="hidden" name="cpf" id="nCPF">
                         
-                        <div class="form-group"><label for="data_sessao">Data da Sessão:</label><input type="date" name="data_sessao" id="data_sessao" required></div>
-                        <div class="form-group checkbox-group"><input type="checkbox" name="compareceu" id="compareceu" value="Sim"><label for="compareceu">O Cliente **Compareceu** à Consulta?</label></div>
-                        <div class="form-group"><label for="anotacao">Anotação da Sessão (Opcional):</label><textarea name="anotacao" id="anotacao" rows="3" placeholder="Anotações, evolução, próxima etapa..."></textarea></div>
+                        <div class="form-group">
+                            <label for="data_sessao">Data da Sessão:</label>
+                            <input type="date" name="data_sessao" id="data_sessao" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="anotacao">Anotação/Descrição da Consulta:</label>
+                            <textarea name="anotacao" id="anotacao" rows="4" placeholder="Detalhes da consulta, evolução do paciente, e observações."></textarea>
+                        </div>
 
-                        <button type="submit">Salvar Sessão e Histórico</button>
+                        <button type="submit">Salvar Sessão e Anotação</button>
                     </form>
+                    
+                    <h3>Histórico de Sessões Anteriores</h3>
+                    <div id="pHistorico" class="historico"></div>
                 </div>
 
                 <div id="listaPacientesContainer" style="display:none;" class="card">
                     <h2>Lista de Clientes Cadastrados</h2>
                     <ul id="listaPacientes"></ul>
                 </div>
-            </div> <div id="viewAgenda" class="view-content">
-                <p id="statusMensagemAgenda" class="alert"></p>
-                <div id='calendar'></div>
+
+            </div> <div id="viewRelatorios" class="view-content" style="display:none;">
+                <h2>Relatório Financeiro Geral</h2>
+                
+                <p id="statusMensagemRelatorio" class="alert"></p>
+                
+                <div id="relatorioContent">
+                    <div class="relatorio-summary">
+                        <div class="relatorio-item">
+                            <h4><span id="rClientesTotal">...</span></h4>
+                            <p>Clientes Cadastrados</p>
+                        </div>
+                        <div class="relatorio-item">
+                            <h4><span id="rSessoesGeral">...</span></h4>
+                            <p>Sessões Registradas</p>
+                        </div>
+                        <div class="relatorio-item total">
+                            <h4>R$ <span id="rTotalFaturado">...</span></h4>
+                            <p>Faturamento Total</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Detalhes por Cliente</h3>
+                    <table id="tabelaRelatorio" style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #ecf0f1;">
+                                <th style="padding: 10px; text-align: left;">Cliente</th>
+                                <th style="padding: 10px;">Sessões</th>
+                                <th style="padding: 10px;">Preço (R$)</th>
+                                <th style="padding: 10px; text-align: right;">Total (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div id="viewRelatorios" class="view-content" style="display:none;">
-                <h2>Relatórios e Resumo Mensal</h2>
-                <div class="placeholder">
-                    <h3>Funcionalidade em Construção</h3>
-                    <p>Aqui você poderá ver relatórios financeiros, frequência de pacientes e resumos de atividades.</p>
-                </div>
-            </div>
-
-        </div> </div> <div id="agendaModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modalTitle">Agendar Novo Evento</h2>
-            <p>Data e Hora: <strong id="modalDateTime"></strong></p>
-
-            <form id="modalForm">
-                <input type="hidden" id="modalEventId">
-                <input type="hidden" id="modalStart">
-                <input type="hidden" id="modalEnd">
-
-                <div class="form-group">
-                    <label for="modalTitleInput">Título/Nome do Cliente:</label>
-                    <input type="text" id="modalTitleInput" required placeholder="Ex: Consulta - Nome do Cliente">
-                </div>
-                
-                <div class="form-group">
-                    <label for="modalType">Tipo de Evento:</label>
-                    <select id="modalType">
-                        <option value="AGENDAMENTO">Agendamento (Cliente)</option>
-                        <option value="BLOQUEIO">Bloqueio (Pessoal)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="modalDuration">Duração (em minutos):</label>
-                    <input type="number" id="modalDuration" value="60" min="15" step="15" required>
-                </div>
-
-                <button type="submit" id="btnSalvar">Salvar Evento</button>
-                <button type="button" id="btnExcluir" style="display:none;">Desagendar/Excluir</button>
-            </form>
-        </div>
-    </div>
-    
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
-    <script>
+        </div> </div> <script>
         // SEU LINK FINAL DO GOOGLE APPS SCRIPT
         const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
@@ -359,30 +365,18 @@
         const navLinks = document.querySelectorAll(".sidebar a");
         const viewContents = document.querySelectorAll(".view-content");
         const mainTitle = document.getElementById("mainTitle");
-        
-        // Mensagens de status
-        const statusMensagemClientes = document.getElementById("statusMensagemClientes");
-        const statusMensagemAgenda = document.getElementById("statusMensagemAgenda");
-        
-        // Modal Agenda
-        const modal = document.getElementById("agendaModal");
-        const closeBtn = document.getElementsByClassName("close")[0];
-        const modalForm = document.getElementById("modalForm");
-        const modalTitleEl = document.getElementById("modalTitle");
-        const modalDateTime = document.getElementById("modalDateTime");
-        const btnExcluir = document.getElementById("btnExcluir");
-        const btnSalvar = document.getElementById("btnSalvar");
-        
-        // --- FUNÇÕES DE STATUS E UTILS ---
-        function showStatus(msg, type, view) {
-            const statusEl = view === 'agenda' ? statusMensagemAgenda : statusMensagemClientes;
-            statusEl.textContent = msg;
-            statusEl.className = `alert alert-${type}`;
-            setTimeout(() => {
-                statusEl.textContent = "";
-                statusEl.className = "alert";
-            }, 5000);
-        }
+        const statusMensagem = document.getElementById("statusMensagem");
+        const statusMensagemRelatorio = document.getElementById("statusMensagemRelatorio");
+
+        // Formulários e Divs
+        const buscaForm = document.getElementById("buscaForm");
+        const dadosPacienteDiv = document.getElementById("dadosPaciente");
+        const novaSessaoForm = document.getElementById("novaSessao");
+        const cadastroForm = document.getElementById("cadastroForm");
+        const alertaCadastroDiv = document.getElementById("alertaCadastro");
+        const btnVerPacientes = document.getElementById("btnVerPacientes");
+        const listaPacientesContainer = document.getElementById("listaPacientesContainer");
+        const listaPacientesUl = document.getElementById("listaPacientes");
 
         // --- FUNÇÕES DE NAVEGAÇÃO E VIEWS ---
         function showView(viewId) {
@@ -400,11 +394,16 @@
                 }
             });
             
-            // Lógica especial para a Agenda
-            if (viewId === 'viewAgenda' && typeof calendar !== 'undefined') {
-                calendar.render();
-            } else if (viewId === 'viewClientes') {
-                 mainTitle.textContent = 'Gerenciamento de Clientes';
+            if (viewId === 'viewClientes') {
+                 mainTitle.textContent = 'Gerenciamento de Clientes e Sessões';
+                 btnVerPacientes.style.display = 'block';
+                 // Limpa campos da busca ao voltar
+                 document.getElementById("buscaCpf").value = "";
+                 resetForms();
+            } else if (viewId === 'viewRelatorios') {
+                 mainTitle.textContent = 'Relatórios Financeiros';
+                 btnVerPacientes.style.display = 'none';
+                 carregarRelatorios(); // Chama a função para carregar dados
             }
         }
 
@@ -416,274 +415,250 @@
             });
         });
         
-        // --- CALENDÁRIO (FULLCALENDAR) ---
-        let calendar;
+        // --- FUNÇÕES DE STATUS E UTILS ---
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Inicializa o calendário
-            var calendarEl = document.getElementById('calendar');
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek', // Vista semanal com hora
-                locale: 'pt-br',
-                slotMinTime: '07:00:00', // Horário de início do dia de trabalho
-                slotMaxTime: '22:00:00', // Horário de fim do dia de trabalho
-                businessHours: {
-                    daysOfWeek: [ 1, 2, 3, 4, 5 ], // Segunda a Sexta
-                    startTime: '08:00',
-                    endTime: '18:00'
-                },
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                selectable: true,
-                editable: true,
-                slotLabelFormat: { hour: 'numeric', minute: '2-digit', omitZeroMinute: false, meridiem: 'short' },
-                
-                // 3. FONTE DE EVENTOS (Conexão com o GAS)
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    showStatus('Carregando agenda...', 'info', 'agenda');
-                    fetch(`${scriptURL}?action=getAgenda&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.erro) {
-                                showStatus('Erro ao carregar agenda: ' + data.erro, 'error', 'agenda');
-                                failureCallback(data.erro);
-                                return;
-                            }
-                            // Mapeia dados do GAS para o formato FullCalendar
-                            const events = data.map(event => ({
-                                id: event.id,
-                                title: event.title,
-                                start: event.start,
-                                end: event.end,
-                                color: event.type === 'BLOQUEIO' ? varCorErro : varCorPrincipal,
-                                extendedProps: { type: event.type }
-                            }));
-                            successCallback(events);
-                            showStatus('Agenda carregada com sucesso.', 'success', 'agenda');
-                        })
-                        .catch(error => {
-                            showStatus('Erro de rede ao carregar agenda.', 'error', 'agenda');
-                            failureCallback(error);
-                        });
-                },
-
-                // 4. AÇÃO: CLIQUE EM UM ESPAÇO VAZIO (Agendar/Bloquear)
-                select: function(info) {
-                    openModalForNew(info.start, info.end);
-                },
-
-                // 5. AÇÃO: CLIQUE EM UM EVENTO EXISTENTE (Editar/Desagendar)
-                eventClick: function(info) {
-                    openModalForEdit(info.event);
-                },
-                
-                // 6. AÇÃO: DRAG-AND-DROP (Mover/Redimensionar, se fosse implementado)
-                // eventDrop: function(info) { /* ... lógica para mover evento ... */ },
-                // eventResize: function(info) { /* ... lógica para redimensionar evento ... */ },
-            });
-            calendar.render();
-            
-            // Inicia na view Agenda, já que é o foco da requisição
-            showView('viewAgenda');
-        });
-
-        const varCorPrincipal = getComputedStyle(document.documentElement).getPropertyValue('--cor-principal').trim();
-        const varCorErro = getComputedStyle(document.documentElement).getPropertyValue('--cor-erro').trim();
-
-        // --- MODAL LÓGICA ---
-        
-        // Abre o modal para um NOVO evento
-        function openModalForNew(start, end) {
-            modalTitleEl.textContent = "Agendar Novo Evento/Bloqueio";
-            modalDateTime.textContent = new Date(start).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-            
-            // Preenche os campos hidden
-            document.getElementById('modalEventId').value = '';
-            document.getElementById('modalStart').value = start.toISOString();
-            document.getElementById('modalEnd').value = end ? end.toISOString() : '';
-
-            // Reseta campos do formulário
-            document.getElementById('modalTitleInput').value = '';
-            document.getElementById('modalType').value = 'AGENDAMENTO';
-            document.getElementById('modalDuration').value = 60;
-
-            btnExcluir.style.display = 'none';
-            btnSalvar.textContent = 'Salvar Evento';
-            modal.style.display = 'block';
+        function showStatus(msg, type, isReport = false) {
+            const statusEl = isReport ? statusMensagemRelatorio : statusMensagem;
+            statusEl.textContent = msg;
+            statusEl.className = `alert alert-${type}`;
+            setTimeout(() => {
+                statusEl.textContent = "";
+                statusEl.className = "alert";
+            }, 5000);
         }
 
-        // Abre o modal para EDITAR um evento existente
-        function openModalForEdit(event) {
-            modalTitleEl.textContent = event.extendedProps.type === 'BLOQUEIO' ? "Editar Bloqueio" : "Editar Agendamento";
-            modalDateTime.textContent = new Date(event.start).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
-            
-            document.getElementById('modalEventId').value = event.id;
-            document.getElementById('modalStart').value = event.start.toISOString();
-            document.getElementById('modalEnd').value = event.end.toISOString();
-            document.getElementById('modalTitleInput').value = event.title;
-            document.getElementById('modalType').value = event.extendedProps.type;
-            
-            // Calcula a duração em minutos
-            const durationMs = event.end.getTime() - event.start.getTime();
-            const durationMins = Math.round(durationMs / 60000);
-            document.getElementById('modalDuration').value = durationMins;
-
-            btnExcluir.style.display = 'block'; // Mostra botão de exclusão
-            btnSalvar.textContent = 'Atualizar Evento';
-            modal.style.display = 'block';
-        }
-
-        // Fechar modal
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        
-        // --- Submissão do Formulário do Modal (Agendar / Bloquear) ---
-        modalForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const eventId = document.getElementById('modalEventId').value;
-            const startStr = document.getElementById('modalStart').value;
-            const title = document.getElementById('modalTitleInput').value;
-            const type = document.getElementById('modalType').value;
-            const duration = parseInt(document.getElementById('modalDuration').value);
-            
-            // Calcula o fim com base na duração
-            const start = new Date(startStr);
-            const end = new Date(start.getTime() + duration * 60000); // Adiciona duração em minutos
-
-            const data = {
-                action: 'createEvent', // Ação no GAS para criar/modificar
-                id: eventId, // Se vazio, é novo; se preenchido, é modificação
-                title: title,
-                start: start.toISOString(),
-                end: end.toISOString(),
-                type: type
-            };
-
-            showStatus(eventId ? 'Atualizando evento...' : 'Agendando...', 'info', 'agenda');
-            modal.style.display = 'none';
-
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(data)
-                });
-                const result = await response.json();
-
-                if (result.sucesso) {
-                    showStatus('Evento salvo com sucesso!', 'success', 'agenda');
-                    calendar.refetchEvents(); // Recarrega a agenda
-                } else {
-                    showStatus(result.erro || 'Erro ao salvar evento.', 'error', 'agenda');
-                }
-            } catch (error) {
-                showStatus('Erro de rede ao salvar evento.', 'error', 'agenda');
-            }
-        });
-        
-        // --- Botão Desagendar / Excluir ---
-        btnExcluir.addEventListener('click', async function() {
-            if (!confirm('Tem certeza que deseja excluir este evento?')) return;
-
-            const eventId = document.getElementById('modalEventId').value;
-            
-            if (!eventId) {
-                showStatus('Erro: ID do evento não encontrado.', 'error', 'agenda');
-                return;
-            }
-
-            const data = { action: 'deleteEvent', id: eventId }; // Ação no GAS para excluir
-
-            showStatus('Excluindo evento...', 'info', 'agenda');
-            modal.style.display = 'none';
-
-            try {
-                const response = await fetch(scriptURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(data)
-                });
-                const result = await response.json();
-
-                if (result.sucesso) {
-                    showStatus('Evento excluído com sucesso!', 'success', 'agenda');
-                    calendar.refetchEvents(); // Recarrega a agenda
-                } else {
-                    showStatus(result.erro || 'Erro ao excluir evento.', 'error', 'agenda');
-                }
-            } catch (error) {
-                showStatus('Erro de rede ao excluir evento.', 'error', 'agenda');
-            }
-        });
-
-        // --- MANTENDO AS FUNÇÕES DE CLIENTES (Busca, Cadastro, Sessão, Lista) ---
-        // (Elas usam um status diferente: statusMensagemClientes)
-        
-        const buscaForm = document.getElementById("buscaForm");
-        const dadosPacienteDiv = document.getElementById("dadosPaciente");
-        const novaSessaoForm = document.getElementById("novaSessao");
-        const cadastroForm = document.getElementById("cadastroForm");
-        const alertaCadastroDiv = document.getElementById("alertaCadastro");
-        const btnVerPacientes = document.getElementById("btnVerPacientes");
-        const listaPacientesContainer = document.getElementById("listaPacientesContainer");
-        const listaPacientesUl = document.getElementById("listaPacientes");
-
-        function resetFormsClientes() {
+        function resetForms() {
             dadosPacienteDiv.style.display = "none";
             cadastroForm.style.display = "none";
             alertaCadastroDiv.style.display = "none";
             listaPacientesContainer.style.display = "none";
+            statusMensagem.textContent = "";
+            statusMensagem.className = "alert";
         }
         
-        // BUSCA PRINCIPAL POR CPF
+        // --- BUSCA PRINCIPAL POR CPF (Coração do Fluxo) ---
         buscaForm.addEventListener("submit", async e => {
             e.preventDefault();
-            resetFormsClientes();
-            // ... (restante da lógica de busca de clientes - omitido por brevidade, mas deve ser mantida)
-            showStatus("Funcionalidade de Cliente mantida. Lembre-se que o seu Google Apps Script precisa gerenciar duas APIs agora: Calendar (para Agenda) e Sheets (para Clientes).", "info", "clientes");
+            const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, ''); 
+            
+            resetForms();
+            
+            if (!cpf) {
+                showStatus("Por favor, digite o CPF.", "error");
+                return;
+            }
+
+            showStatus("Buscando cliente e histórico...", "info");
+
+            try {
+                // Nova ação: buscarClienteCompleto (deve retornar dados do cliente + histórico)
+                const res = await fetch(`${scriptURL}?action=buscarClienteCompleto&cpf=${encodeURIComponent(cpf)}`);
+                const dados = await res.json();
+
+                if (dados.erro === "Paciente não encontrado") {
+                    // CPF não encontrado: Exibe formulário de CADASTRO IMEDIATO
+                    document.getElementById("cpfNaoEncontrado").textContent = cpf;
+                    document.getElementById("cCPF").value = cpf;
+                    alertaCadastroDiv.style.display = "block";
+                    cadastroForm.style.display = "block";
+                    // Define o foco no campo Nome
+                    document.getElementById("cNome").focus();
+                    showStatus("Cliente não encontrado. Preencha o cadastro RÁPIDO.", "info");
+                    return;
+                } else if (dados.erro) {
+                    showStatus(dados.erro, "error");
+                    return;
+                }
+
+                // Cliente encontrado: Exibe dados, resumo e formulário de sessão
+                const p = dados.paciente;
+                const historico = dados.historico || [];
+                const totalSessoes = historico.length;
+                const preco = parseFloat(p.preco || 0);
+                const totalGeral = totalSessoes * preco;
+                
+                dadosPacienteDiv.style.display = "block";
+                document.getElementById("pNome").textContent = p.nome;
+                document.getElementById("pCPF").textContent = p.cpf;
+                // Os campos de Tratamento/Data Nasc. virão vazios se não preenchidos
+                document.getElementById("pTratamento").textContent = p.tratamento || "Não informado";
+                document.getElementById("pPreco").textContent = preco.toFixed(2);
+                
+                // Campos do Relatório na View Clientes
+                document.getElementById("pSessoesTotal").textContent = totalSessoes;
+                document.getElementById("pTotalGeral").textContent = totalGeral.toFixed(2);
+                
+                // Prepara formulário de sessão
+                document.getElementById("nCPF").value = p.cpf;
+                document.getElementById("data_sessao").valueAsDate = new Date(); // Data atual
+                document.getElementById("anotacao").value = ""; // Limpa a anotação
+
+                // Prepara Histórico
+                const historicoHTML = historico.map(h => 
+                    `<p><b>Data: ${h.data_sessao}</b> | Anotação: ${h.anotacao || "(sem anotação)"}</p>`
+                ).join("");
+                document.getElementById("pHistorico").innerHTML = historicoHTML || "<p>Nenhum histórico de sessões encontrado.</p>";
+                showStatus("Cliente carregado. Pronto para registrar nova sessão.", "success");
+
+            } catch (error) {
+                showStatus("Erro ao conectar com o servidor para buscar cliente.", "error");
+                console.error("Erro na busca:", error);
+            }
         });
 
         // CADASTRAR NOVO PACIENTE
         cadastroForm.addEventListener("submit", async e => {
             e.preventDefault();
-            // ... (restante da lógica de cadastro de clientes - omitido por brevidade, mas deve ser mantida)
-            showStatus("Funcionalidade de Cliente mantida.", "info", "clientes");
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            showStatus("Cadastrando cliente...", "info");
+
+            try {
+                // Ação de Cadastro
+                const res = await fetch(scriptURL, { method: "POST", body: formData });
+                const result = await res.json();
+                
+                if (result.sucesso) {
+                    showStatus("Cliente cadastrado! Carregando dados para registrar 1ª sessão...", "success");
+                    // Após cadastrar, dispara a busca para abrir a área de Nova Sessão
+                    buscaForm.dispatchEvent(new Event('submit')); 
+                } else {
+                    showStatus(result.erro || "Erro desconhecido ao cadastrar cliente.", "error");
+                }
+            } catch (error) {
+                showStatus("Falha na comunicação de rede ao cadastrar.", "error");
+                console.error("Erro no cadastro:", error);
+            }
         });
+
 
         // SALVAR NOVA SESSÃO
         novaSessaoForm.addEventListener("submit", async e => {
             e.preventDefault();
-            // ... (restante da lógica de salvar sessão - omitido por brevidade, mas deve ser mantida)
-            showStatus("Funcionalidade de Cliente mantida.", "info", "clientes");
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Adiciona 'Sim' para 'compareceu' e data de registro
+            formData.set('compareceu', 'Sim'); 
+            
+            showStatus("Registrando sessão...", "info");
+
+            try {
+                const res = await fetch(scriptURL, { method: "POST", body: formData });
+                const result = await res.json();
+                
+                if (result.sucesso) {
+                    showStatus("Sessão registrada com sucesso! Histórico atualizado.", "success");
+                    // Recarrega os dados do paciente para atualizar o histórico e o resumo
+                    buscaForm.dispatchEvent(new Event('submit')); 
+                } else {
+                    showStatus(result.erro || "Erro desconhecido ao registrar sessão.", "error");
+                }
+            } catch (error) {
+                showStatus("Falha na comunicação de rede ao registrar sessão.", "error");
+                console.error("Erro no registro:", error);
+            }
         });
+
 
         // VER TODOS OS PACIENTES
         btnVerPacientes.addEventListener("click", async () => {
-            // Garante que estamos na view correta antes de listar
             showView('viewClientes'); 
-            resetFormsClientes();
-            // ... (restante da lógica de listar clientes - omitido por brevidade, mas deve ser mantida)
-            showStatus("Funcionalidade de Cliente mantida.", "info", "clientes");
+            resetForms();
+            
+            listaPacientesContainer.style.display = "block";
+            listaPacientesUl.innerHTML = "<li>Carregando clientes...</li>";
+            showStatus("Carregando lista de clientes...", "info");
+
+            try {
+                const res = await fetch(`${scriptURL}?action=listarPacientes`);
+                const dados = await res.json();
+
+                if (dados.erro) {
+                    showStatus(dados.erro, "error");
+                    listaPacientesUl.innerHTML = "";
+                    return;
+                }
+
+                if (dados.pacientes && dados.pacientes.length > 0) {
+                    listaPacientesUl.innerHTML = dados.pacientes.map(p => 
+                        `<li data-cpf="${p.cpf}">${p.nome} (CPF: ${p.cpf})</li>`
+                    ).join("");
+                    showStatus("Lista de clientes carregada. Clique para buscar.", "success");
+                } else {
+                    listaPacientesUl.innerHTML = "<li>Nenhum cliente cadastrado.</li>";
+                    showStatus("Nenhum cliente cadastrado.", "info");
+                }
+            } catch (error) {
+                showStatus("Erro ao carregar lista de clientes.", "error");
+                console.error("Erro na lista:", error);
+                listaPacientesUl.innerHTML = "";
+            }
         });
-        
+
         // Clicar em um paciente da lista para buscar
         listaPacientesUl.addEventListener("click", e => {
             if (e.target.tagName === 'LI') {
                 const cpfPaciente = e.target.dataset.cpf;
                 document.getElementById("buscaCpf").value = cpfPaciente;
-                buscaForm.dispatchEvent(new Event('submit'));
+                listaPacientesContainer.style.display = "none"; // Esconde a lista
+                buscaForm.dispatchEvent(new Event('submit')); // Dispara a busca
             }
         });
+        
+        // --- RELATÓRIOS ---
+        async function carregarRelatorios() {
+            statusMensagemRelatorio.textContent = ""; // Limpa status
+            showStatus("Gerando relatório...", "info", true);
+            
+            try {
+                const res = await fetch(`${scriptURL}?action=gerarRelatorioGeral`);
+                const dados = await res.json();
+
+                if (dados.erro) {
+                    showStatus(dados.erro, "error", true);
+                    return;
+                }
+                
+                const { totalClientes, totalSessoesGeral, faturamentoTotal, detalhesClientes } = dados;
+
+                // 1. Resumo Geral
+                document.getElementById("rClientesTotal").textContent = totalClientes;
+                document.getElementById("rSessoesGeral").textContent = totalSessoesGeral;
+                document.getElementById("rTotalFaturado").textContent = parseFloat(faturamentoTotal).toFixed(2);
+
+                // 2. Tabela de Detalhes
+                const tbody = document.querySelector("#tabelaRelatorio tbody");
+                tbody.innerHTML = '';
+                
+                if (detalhesClientes && detalhesClientes.length > 0) {
+                    detalhesClientes.forEach(cliente => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td style="padding: 10px; border-bottom: 1px solid #eee;">${cliente.nome}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${cliente.numSessoes}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${parseFloat(cliente.precoSessao).toFixed(2)}</td>
+                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${parseFloat(cliente.totalFaturado).toFixed(2)}</td>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhum dado de sessão encontrado.</td></tr>';
+                }
+
+                showStatus("Relatório carregado com sucesso.", "success", true);
+
+            } catch (error) {
+                showStatus("Erro de rede ao carregar relatório.", "error", true);
+                console.error("Erro no relatório:", error);
+            }
+        }
+        
+        // Inicia na view Clientes
+        showView('viewClientes'); 
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
