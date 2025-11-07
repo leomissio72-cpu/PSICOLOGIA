@@ -1,0 +1,281 @@
+/* [TODO O CSS QUE ESTAVA NO INDEX.HTML VAI AQUI] */
+:root {
+    --cor-principal: #3498db; 
+    --cor-secundaria: #2c3e50; 
+    --cor-fundo: #f4f6f9;
+    --cor-fundo-card: #ffffff;
+    --cor-borda: #dcdfe6;
+    --cor-sucesso: #2ecc71; 
+    --cor-erro: #e74c3c; 
+    --cor-aviso: #f39c12; 
+    --cor-pago: var(--cor-sucesso);
+    --cor-pendente: var(--cor-aviso);
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cor-fundo);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Login Screen Styles */
+#loginScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--cor-secundaria);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.login-card {
+    background-color: var(--cor-fundo-card);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    width: 350px;
+    text-align: center;
+}
+.login-card h2 {
+    color: var(--cor-principal);
+    margin-bottom: 30px;
+    border-bottom: none;
+    font-size: 1.8em;
+}
+.login-card button {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Sidebar, Content, Forms, Alerts */
+.sidebar {
+    width: 200px;
+    background-color: var(--cor-secundaria);
+    color: white;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    position: fixed;
+    height: 100%;
+    z-index: 10;
+}
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--cor-principal);
+    font-size: 1.5em;
+}
+.sidebar a {
+    display: block;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #dcdde1;
+    transition: background 0.3s, color 0.3s;
+    border-left: 5px solid transparent;
+    cursor: pointer;
+}
+.sidebar a:hover, .sidebar a.active {
+    background-color: #34495e;
+    color: white;
+    border-left: 5px solid var(--cor-principal);
+}
+.sidebar a::before {
+    content: "•";
+    margin-right: 10px;
+    color: var(--cor-principal);
+}
+
+.content {
+    margin-left: 200px;
+    padding: 40px;
+    flex-grow: 1;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.header h1 {
+    margin: 0;
+    color: var(--cor-secundaria);
+}
+.card {
+    background-color: var(--cor-fundo-card);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: var(--cor-principal);
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+h3 {
+     color: var(--cor-secundaria);
+     margin-top: 30px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+}
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+button {
+    background: var(--cor-principal);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+}
+button:hover {
+    background: #2980b9;
+}
+#buscaForm {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+#buscaForm .form-group {
+    flex-grow: 1;
+    margin-bottom: 0;
+}
+#top-buttons button {
+    background: var(--cor-aviso);
+    margin-left: 10px;
+}
+.alert {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-align: center;
+}
+.alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.alert-info { background-color: #d1ecf1; color: #0c5460; }
+.alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+.dados-paciente p {
+    background: #ecf0f1;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--cor-principal);
+}
+.historico {
+    background: #fcfcfc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    max-height: 250px;
+    overflow-y: auto;
+}
+.historico p {
+    margin: 8px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #cfd8dc;
+    font-size: 0.95em;
+    white-space: pre-wrap; /* Garante quebras de linha nas anotações */
+}
+
+.relatorio-summary {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap; 
+}
+.relatorio-item {
+    padding: 15px 15px;
+    background: var(--cor-principal);
+    color: white;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 150px;
+    margin: 5px;
+}
+.relatorio-item h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.4em;
+}
+.relatorio-item p {
+    margin: 0;
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+.relatorio-item.total-mes {
+     background: var(--cor-aviso);
+}
+.relatorio-item.total-geral {
+     background: var(--cor-sucesso);
+}
+
+#tabelaRelatorioMensal {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+#tabelaRelatorioMensal th, #tabelaRelatorioMensal td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+#tabelaRelatorioMensal th {
+    background-color: #ecf0f1;
+    font-weight: 600;
+    color: var(--cor-secundaria);
+}
+
+.status-tag {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: inline-block;
+}
+.status-pago {
+    background-color: var(--cor-pago);
+    color: white;
+}
+.status-pendente {
+    background-color: var(--cor-pendente);
+    color: white;
+}
+.filtro-form {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+}
+.filtro-form .form-group {
+    flex-grow: 1;
+    margin-bottom: 0;
+}
