@@ -1,5 +1,5 @@
 // !!! SUBSTITUA PELA SUA URL DE IMPLANTAÇÃO (A URL LONGA DO APPS SCRIPT) !!!
-const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec"; 
+const scriptURL = "https://script.google.com/macros/s/AKfycbxo6dRu7_tJ_fyGKPur_RvMjAaJTy3d2zYuB6hRUowBpH_xnT_T7GLQRWz2_ipyNPmg/exec"; 
 // Você já fez essa parte! Mantenha a URL correta do seu Apps Script aqui.
 
 // --- Variáveis Globais e DOM ---
