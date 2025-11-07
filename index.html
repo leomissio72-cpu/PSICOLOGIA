@@ -7,14 +7,14 @@
     <style>
         /* [MANTER TODO O CSS ANTERIOR, JÁ ESTÁ INCLUÍDO AQUI] */
         :root {
-            --cor-principal: #3498db; 
-            --cor-secundaria: #2c3e50; 
+            --cor-principal: #3498db;
+            --cor-secundaria: #2c3e50;
             --cor-fundo: #f4f6f9;
             --cor-fundo-card: #ffffff;
             --cor-borda: #dcdfe6;
-            --cor-sucesso: #2ecc71; 
-            --cor-erro: #e74c3c; 
-            --cor-aviso: #f39c12; 
+            --cor-sucesso: #2ecc71;
+            --cor-erro: #e74c3c;
+            --cor-aviso: #f39c12;
             --cor-pago: var(--cor-sucesso);
             --cor-pendente: var(--cor-aviso);
         }
@@ -27,8 +27,8 @@
             min-height: 100vh;
         }
 
-        /* Login Screen Styles */
-        #loginScreen {
+        /* Login Screen Styles (REMOVIDO OU INUTILIZADO AGORA) */
+        /* #loginScreen {
             position: fixed;
             top: 0;
             left: 0;
@@ -57,7 +57,7 @@
         .login-card button {
             width: 100%;
             margin-top: 20px;
-        }
+        } */
 
         /* Sidebar, Content, Forms, Alerts: [MANTER O RESTO DO CSS ANTERIOR] */
         .sidebar { /* ... */ }
@@ -124,7 +124,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 30px;
         }
-        
+
         h2 {
             color: var(--cor-principal);
             border-bottom: 2px solid #ecf0f1;
@@ -213,14 +213,14 @@
             font-size: 0.95em;
             white-space: pre-wrap; /* Garante quebras de linha nas anotações */
         }
-        
+
         .relatorio-summary {
             display: flex;
             justify-content: space-around;
             text-align: center;
             margin-top: 20px;
             margin-bottom: 30px;
-            flex-wrap: wrap; 
+            flex-wrap: wrap;
         }
         .relatorio-item {
             padding: 15px 15px;
@@ -246,7 +246,7 @@
         .relatorio-item.total-geral {
              background: var(--cor-sucesso);
         }
-        
+
         #tabelaRelatorioMensal {
             width: 100%;
             border-collapse: collapse;
@@ -262,7 +262,7 @@
             font-weight: 600;
             color: var(--cor-secundaria);
         }
-        
+
         .status-tag {
             padding: 5px 10px;
             border-radius: 5px;
@@ -295,6 +295,8 @@
 </head>
 <body>
 
+    <!-- A tela de login foi removida ou inutilizada. O sistema iniciará diretamente no conteúdo principal. -->
+    <!--
     <div id="loginScreen">
         <div class="login-card">
             <h2>PSICO MANAGER</h2>
@@ -308,14 +310,16 @@
             </form>
         </div>
     </div>
-    
-    <div id="mainContent" style="display: none;">
-        
+    -->
+
+    <div id="mainContent" style="display: flex;">
+
         <div class="sidebar">
             <h2>PSICO MANAGER</h2>
             <a id="navClientes" class="active" data-view="clientes">Clientes/Sessões</a>
             <a id="navRelatorios" data-view="relatorios">Relatórios Financeiros</a>
-            <a id="navLogout" onclick="logout()" style="margin-top: 30px; color: #e74c3c;">Sair (Logout)</a>
+            <!-- O botão de logout foi removido ou inativado, pois não há login -->
+            <!-- <a id="navLogout" onclick="logout()" style="margin-top: 30px; color: #e74c3c;">Sair (Logout)</a> -->
         </div>
 
         <div class="content">
@@ -328,9 +332,9 @@
             </div>
 
             <div class="card">
-                
+
                 <div id="viewClientes" class="view-content">
-                    
+
                     <form id="buscaForm">
                         <div class="form-group">
                             <label for="buscaCpf">Buscar cliente pelo **CPF** (somente números):</label>
@@ -338,7 +342,7 @@
                         </div>
                         <button type="submit">Buscar Cliente</button>
                     </form>
-                    
+
                     <p id="statusMensagem" class="alert"></p>
 
                     <div id="alertaCadastro" class="alert-info" style="display:none;">
@@ -348,7 +352,7 @@
                     <form id="cadastroForm" style="display:none;" class="card">
                         <h2>Cadastro Rápido de Novo Cliente</h2>
                         <input type="hidden" name="action" value="cadastrarPaciente">
-                        
+
                         <div class="form-group">
                             <label for="cNome">Nome Completo:</label>
                             <input type="text" name="nome" id="cNome" required>
@@ -361,7 +365,7 @@
                             <label for="cPreco">Preço da Sessão (R$):</label>
                             <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
                         </div>
-                        
+
                         <button type="submit">Finalizar Cadastro</button>
                     </form>
 
@@ -374,7 +378,7 @@
                             <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
                             <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
                         </div>
-                        
+
                         <div class="relatorio-summary">
                             <div class="relatorio-item total-mes">
                                 <h4><span id="pSessoesMes">0</span></h4>
@@ -394,17 +398,17 @@
                             </div>
                         </div>
 
-                        
+
                         <h3>Registrar Nova Sessão</h3>
                         <form id="novaSessao">
                             <input type="hidden" name="action" value="registrarSessao">
                             <input type="hidden" name="cpf" id="nCPF">
-                            
+
                             <div class="form-group">
                                 <label for="data_sessao">Data da Sessão:</label>
                                 <input type="date" name="data_sessao" id="data_sessao" required>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label for="anotacao">Anotação/Descrição da Consulta:</label>
                                 <textarea name="anotacao" id="anotacao" rows="4" placeholder="Detalhes da consulta, evolução do paciente, e observações."></textarea>
@@ -412,7 +416,7 @@
 
                             <button type="submit">Salvar Sessão e Anotação</button>
                         </form>
-                        
+
                         <h3>Histórico de Sessões Anteriores</h3>
                         <div id="pHistorico" class="historico"></div>
                     </div>
@@ -423,12 +427,12 @@
                     </div>
 
                 </div>
-                
+
                 <div id="viewRelatorios" class="view-content" style="display:none;">
                     <h2>Relatório Financeiro por Período</h2>
-                    
+
                     <p id="statusMensagemRelatorio" class="alert"></p>
-                    
+
                     <form id="filtroRelatorioForm" class="filtro-form">
                         <div class="form-group">
                             <label for="dataInicio">Data de Início:</label>
@@ -440,7 +444,7 @@
                         </div>
                         <button type="submit">Filtrar Relatório</button>
                     </form>
-                    
+
                     <div id="relatorioContent">
                         <div class="relatorio-summary">
                             <div class="relatorio-item total-mes">
@@ -452,7 +456,7 @@
                                 <p>Faturamento no Período</p>
                             </div>
                         </div>
-                        
+
                         <h3>Status de Pagamento por Cliente no Período</h3>
                         <table id="tabelaRelatorioMensal" style="width:100%;">
                             <thead>
@@ -472,15 +476,17 @@
 
             </div>
         </div>
-    </div> <script>
+    </div>
+    <script>
         // !!! SUBSTITUA PELA SUA URL DE IMPLANTAÇÃO !!!
         const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
         // --- Variáveis Globais e DOM ---
-        const loginScreen = document.getElementById("loginScreen");
+        // A tela de login e variáveis relacionadas foram removidas
+        // const loginScreen = document.getElementById("loginScreen");
         const mainContent = document.getElementById("mainContent");
-        const loginForm = document.getElementById("loginForm");
-        const loginStatus = document.getElementById("loginStatus");
+        // const loginForm = document.getElementById("loginForm");
+        // const loginStatus = document.getElementById("loginStatus"); // Removido, pois não há mais login
 
         const navLinks = document.querySelectorAll(".sidebar a");
         const viewContents = document.querySelectorAll(".view-content");
@@ -499,7 +505,7 @@
         const listaPacientesUl = document.getElementById("listaPacientes");
         const filtroRelatorioForm = document.getElementById("filtroRelatorioForm");
 
-        // --- FUNÇÕES DE LOGIN/LOGOUT ---
+        // --- FUNÇÕES DE LOGIN/LOGOUT (Removidas/Ajustadas) ---
 
         function showStatus(msg, type, isReport = false) {
             const statusEl = isReport ? statusMensagemRelatorio : statusMensagem;
@@ -510,70 +516,27 @@
                 statusEl.className = "alert";
             }, 5000);
         }
-        
-        function showLoginStatus(msg, type) {
-            loginStatus.textContent = msg;
-            loginStatus.className = `alert alert-${type}`;
-            setTimeout(() => {
-                loginStatus.textContent = "";
-                loginStatus.className = "alert";
-            }, 5000);
-        }
 
-        loginForm.addEventListener("submit", async e => {
-            e.preventDefault();
-            const password = document.getElementById("loginPassword").value;
-            
-            showLoginStatus("Verificando senha...", "info");
+        // showLoginStatus foi removida, pois não há tela de login
+        // function showLoginStatus(msg, type) { /* ... */ }
 
-            try {
-                // Nova Ação: verificarLogin
-                const res = await fetch(scriptURL, { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        action: 'verificarLogin', 
-                        password: password 
-                    })
-                });
-                const result = await res.json();
+        // loginForm.addEventListener foi removido
+        // loginForm.addEventListener("submit", async e => { /* ... */ });
 
-                if (result.sucesso) {
-                    // Login Bem-sucedido
-                    localStorage.setItem('isAuthenticated', 'true');
-                    loginScreen.style.display = 'none';
-                    mainContent.style.display = 'flex';
-                    showView('viewClientes');
-                } else {
-                    showLoginStatus("Senha incorreta. Tente novamente.", "error");
-                    document.getElementById("loginPassword").value = '';
-                }
-            } catch (error) {
-                showLoginStatus("Erro de rede. Verifique a URL do App Script.", "error");
-            }
-        });
+        // checkAuth foi removida e substituída por um carregamento direto
+        // function checkAuth() { /* ... */ }
 
-        function checkAuth() {
-            if (localStorage.getItem('isAuthenticated') === 'true') {
-                loginScreen.style.display = 'none';
-                mainContent.style.display = 'flex';
-                showView('viewClientes');
-            } else {
-                loginScreen.style.display = 'flex';
-                mainContent.style.display = 'none';
-            }
-        }
-        
-        function logout() {
-            localStorage.removeItem('isAuthenticated');
-            loginScreen.style.display = 'flex';
-            mainContent.style.display = 'none';
-            document.getElementById("loginPassword").value = '';
-            showLoginStatus("Você foi desconectado.", "info");
-        }
+        // A função logout foi removida, pois não há login para "sair"
+        // Se quiser um botão "Sair" com outra funcionalidade, você pode criar uma nova função.
+        // function logout() {
+        //     // Exemplo: Limpar localStorage e recarregar a página se necessário.
+        //     localStorage.clear();
+        //     window.location.reload();
+        // }
+
 
         // --- RESTO DO CÓDIGO (Navegação, Busca, Cadastro, Sessão, Relatório) ---
-        
+
         function resetForms() {
             dadosPacienteDiv.style.display = "none";
             cadastroForm.style.display = "none";
@@ -597,7 +560,7 @@
                     mainTitle.textContent = link.textContent.split("/")[0].trim();
                 }
             });
-            
+
             if (viewId === 'viewClientes') {
                  mainTitle.textContent = 'Gerenciamento de Clientes e Sessões';
                  btnVerPacientes.style.display = 'block';
@@ -613,11 +576,11 @@
                  filtroRelatorioForm.dispatchEvent(new Event('submit'));
             }
         }
-        
+
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Ignora o link de logout
+                // Ignora o link de logout (que já foi removido ou inativado no HTML)
                 if (link.id !== 'navLogout') {
                     showView('view' + link.dataset.view.charAt(0).toUpperCase() + link.dataset.view.slice(1));
                 }
@@ -626,8 +589,8 @@
 
         buscaForm.addEventListener("submit", async e => {
             e.preventDefault();
-            const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, ''); 
-            
+            const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, '');
+
             resetForms();
             showStatus("Buscando cliente e histórico...", "info");
 
@@ -653,27 +616,27 @@
                 const preco = parseFloat(p.preco_sessao || 0); // Correção do nome da coluna
                 const totalSessoesGeral = historico.length;
                 const totalGeral = totalSessoesGeral * preco;
-                
+
                 const sessoesMes = dados.sessoesNoMes || 0;
                 const totalMes = sessoesMes * preco;
-                
+
                 dadosPacienteDiv.style.display = "block";
                 document.getElementById("pNome").textContent = p.nome;
                 document.getElementById("pCPF").textContent = p.cpf;
                 document.getElementById("pPreco").textContent = preco.toFixed(2);
                 document.getElementById("pTratamento").textContent = p.tratamento || "Não informado";
-                
+
                 document.getElementById("pSessoesMes").textContent = sessoesMes;
                 document.getElementById("pTotalMes").textContent = totalMes.toFixed(2);
                 document.getElementById("pSessoesTotal").textContent = totalSessoesGeral;
                 document.getElementById("pTotalGeral").textContent = totalGeral.toFixed(2);
-                
+
                 document.getElementById("nCPF").value = p.cpf;
-                document.getElementById("data_sessao").valueAsDate = new Date(); 
-                document.getElementById("anotacao").value = ""; 
+                document.getElementById("data_sessao").valueAsDate = new Date();
+                document.getElementById("anotacao").value = "";
 
                 // ATUALIZADO: Exibe a data e a anotação da última consulta
-                const historicoHTML = historico.map((h, index) => 
+                const historicoHTML = historico.map((h, index) =>
                     `<p><b>Data: ${h.data_sessao} ${index === 0 ? '(Última Consulta)' : ''}</b><br>Anotação: ${h.anotacao || "(sem anotação)"}</p>`
                 ).join("");
                 document.getElementById("pHistorico").innerHTML = historicoHTML || "<p>Nenhum histórico de sessões encontrado.</p>";
@@ -694,10 +657,10 @@
             try {
                 const res = await fetch(scriptURL, { method: "POST", body: formData });
                 const result = await res.json();
-                
+
                 if (result.sucesso) {
                     showStatus("Cliente cadastrado! Carregando dados.", "success");
-                    buscaForm.dispatchEvent(new Event('submit')); 
+                    buscaForm.dispatchEvent(new Event('submit'));
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao cadastrar cliente.", "error");
                 }
@@ -710,17 +673,17 @@
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            formData.set('compareceu', 'Sim'); 
-            
+            formData.set('compareceu', 'Sim');
+
             showStatus("Registrando sessão...", "info");
 
             try {
                 const res = await fetch(scriptURL, { method: "POST", body: formData });
                 const result = await res.json();
-                
+
                 if (result.sucesso) {
                     showStatus("Sessão registrada com sucesso! Histórico atualizado.", "success");
-                    buscaForm.dispatchEvent(new Event('submit')); 
+                    buscaForm.dispatchEvent(new Event('submit'));
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao registrar sessão.", "error");
                 }
@@ -729,15 +692,148 @@
             }
         });
 
-        btnVerPacientes.addEventListener("click", async () => { /* ... lista pacientes logic ... */ });
-        listaPacientesUl.addEventListener("click", e => { /* ... lista click logic ... */ });
-        filtroRelatorioForm.addEventListener('submit', async e => { /* ... filter logic ... */ });
-        async function carregarRelatorioFinanceiro() { /* ... report logic ... */ }
-        async function marcarPagamento(cpf, dataInicio, dataFim) { /* ... payment logic ... */ }
+        btnVerPacientes.addEventListener("click", async () => {
+            resetForms();
+            listaPacientesContainer.style.display = "block";
+            showStatus("Carregando lista de clientes...", "info");
 
-        // Chama a função de autenticação ao carregar a página
-        window.onload = checkAuth;
-        
+            try {
+                const res = await fetch(`${scriptURL}?action=listarPacientes`);
+                const dados = await res.json();
+
+                if (dados.erro) {
+                    showStatus(dados.erro, "error");
+                    return;
+                }
+
+                listaPacientesUl.innerHTML = '';
+                if (dados.pacientes && dados.pacientes.length > 0) {
+                    dados.pacientes.forEach(p => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${p.nome}</strong> (CPF: ${p.cpf}) - Preço: R$ ${parseFloat(p.preco_sessao || 0).toFixed(2)}
+                            <button data-cpf="${p.cpf}" class="btn-selecionar">Selecionar</button>
+                        `;
+                        listaPacientesUl.appendChild(li);
+                    });
+                    showStatus("Lista de clientes carregada.", "success");
+                } else {
+                    listaPacientesUl.innerHTML = '<li>Nenhum cliente cadastrado ainda.</li>';
+                    showStatus("Nenhum cliente cadastrado ainda.", "info");
+                }
+            } catch (error) {
+                showStatus("Erro ao conectar com o servidor para listar clientes.", "error");
+                console.error("Erro na lista:", error);
+            }
+        });
+
+        listaPacientesUl.addEventListener("click", e => {
+            if (e.target.classList.contains("btn-selecionar")) {
+                const cpf = e.target.dataset.cpf;
+                document.getElementById("buscaCpf").value = cpf;
+                buscaForm.dispatchEvent(new Event('submit'));
+                listaPacientesContainer.style.display = "none";
+            }
+        });
+
+        filtroRelatorioForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            await carregarRelatorioFinanceiro();
+        });
+
+        async function carregarRelatorioFinanceiro() {
+            const dataInicio = document.getElementById('dataInicio').value;
+            const dataFim = document.getElementById('dataFim').value;
+
+            if (!dataInicio || !dataFim) {
+                showStatus("Por favor, selecione as datas de início e fim para o relatório.", "error", true);
+                return;
+            }
+
+            showStatus("Gerando relatório financeiro...", "info", true);
+
+            try {
+                const res = await fetch(`${scriptURL}?action=gerarRelatorioFinanceiro&dataInicio=${dataInicio}&dataFim=${dataFim}`);
+                const dados = await res.json();
+
+                if (dados.erro) {
+                    showStatus(dados.erro, "error", true);
+                    return;
+                }
+
+                document.getElementById('rSessoesFiltradas').textContent = dados.totalSessoes;
+                document.getElementById('rTotalFiltrado').textContent = parseFloat(dados.faturamentoTotal).toFixed(2);
+
+                const tabelaBody = document.querySelector('#tabelaRelatorioMensal tbody');
+                tabelaBody.innerHTML = '';
+
+                if (dados.detalhesClientes && dados.detalhesClientes.length > 0) {
+                    dados.detalhesClientes.forEach(cliente => {
+                        const tr = document.createElement('tr');
+                        const statusClass = cliente.statusPagamento === 'Pago' ? 'status-pago' : 'status-pendente';
+                        const statusTexto = cliente.statusPagamento === 'Pago' ? 'Pago' : 'Pendente';
+
+                        tr.innerHTML = `
+                            <td>${cliente.nome}</td>
+                            <td>${cliente.sessoesNoPeriodo}</td>
+                            <td>R$ ${parseFloat(cliente.valorAPagar).toFixed(2)}</td>
+                            <td><span class="status-tag ${statusClass}">${statusTexto}</span></td>
+                            <td>
+                                ${cliente.statusPagamento !== 'Pago' ?
+                                    `<button onclick="marcarPagamento('${cliente.cpf}', '${dataInicio}', '${dataFim}')">Marcar como Pago</button>` :
+                                    ''
+                                }
+                            </td>
+                        `;
+                        tabelaBody.appendChild(tr);
+                    });
+                    showStatus("Relatório gerado com sucesso.", "success", true);
+                } else {
+                    tabelaBody.innerHTML = '<tr><td colspan="5">Nenhum dado encontrado para o período.</td></tr>';
+                    showStatus("Nenhum dado encontrado para o período selecionado.", "info", true);
+                }
+
+            } catch (error) {
+                showStatus("Erro ao conectar com o servidor para gerar relatório.", "error", true);
+                console.error("Erro no relatório:", error);
+            }
+        }
+
+        async function marcarPagamento(cpf, dataInicio, dataFim) {
+            if (!confirm(`Tem certeza que deseja marcar o pagamento para o cliente CPF ${cpf} no período de ${dataInicio} a ${dataFim} como PAGO?`)) {
+                return;
+            }
+
+            showStatus("Marcando pagamento...", "info", true);
+
+            try {
+                const res = await fetch(scriptURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'marcarPagamento',
+                        cpf: cpf,
+                        dataInicio: dataInicio,
+                        dataFim: dataFim
+                    })
+                });
+                const result = await res.json();
+
+                if (result.sucesso) {
+                    showStatus("Pagamento marcado como PAGO com sucesso!", "success", true);
+                    await carregarRelatorioFinanceiro(); // Recarrega o relatório para refletir a mudança
+                } else {
+                    showStatus(result.erro || "Erro desconhecido ao marcar pagamento.", "error", true);
+                }
+            } catch (error) {
+                showStatus("Falha na comunicação de rede ao marcar pagamento.", "error", true);
+                console.error("Erro ao marcar pagamento:", error);
+            }
+        }
+
+        // Chama a função de visualização inicial ao carregar a página
+        window.onload = () => showView('viewClientes');
+
     </script>
 </body>
 </html>
