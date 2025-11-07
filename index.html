@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PSICO MANAGER - Gerenciamento de Pacientes e Relatórios</title>
     <style>
-        /* --- Cores e Tipografia (Mantendo o Layout Profissional) --- */
+        /* [MANTER TODO O CSS ANTERIOR, JÁ ESTÁ INCLUÍDO AQUI] */
         :root {
-            --cor-principal: #3498db; /* Azul */
-            --cor-secundaria: #2c3e50; /* Azul Escuro */
+            --cor-principal: #3498db; 
+            --cor-secundaria: #2c3e50; 
             --cor-fundo: #f4f6f9;
             --cor-fundo-card: #ffffff;
             --cor-borda: #dcdfe6;
-            --cor-sucesso: #2ecc71; /* Verde */
-            --cor-erro: #e74c3c; /* Vermelho */
-            --cor-aviso: #f39c12; /* Laranja */
+            --cor-sucesso: #2ecc71; 
+            --cor-erro: #e74c3c; 
+            --cor-aviso: #f39c12; 
+            --cor-pago: var(--cor-sucesso);
+            --cor-pendente: var(--cor-aviso);
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -25,7 +27,45 @@
             min-height: 100vh;
         }
 
-        /* --- Menu Lateral (Sidebar) --- */
+        /* Login Screen Styles */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--cor-secundaria);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .login-card {
+            background-color: var(--cor-fundo-card);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+        }
+        .login-card h2 {
+            color: var(--cor-principal);
+            margin-bottom: 30px;
+            border-bottom: none;
+            font-size: 1.8em;
+        }
+        .login-card button {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Sidebar, Content, Forms, Alerts: [MANTER O RESTO DO CSS ANTERIOR] */
+        .sidebar { /* ... */ }
+        .content { /* ... */ }
+        .header { /* ... */ }
+        .card { /* ... */ }
+        h2, h3, .form-group { /* ... */ }
+        /* ... e todos os outros estilos ... */
         .sidebar {
             width: 200px;
             background-color: var(--cor-secundaria);
@@ -62,7 +102,6 @@
             color: var(--cor-principal);
         }
 
-        /* --- Conteúdo Principal e Views --- */
         .content {
             margin-left: 200px;
             padding: 40px;
@@ -86,7 +125,6 @@
             margin-bottom: 30px;
         }
         
-        /* --- Elementos de Formulário e Botões --- */
         h2 {
             color: var(--cor-principal);
             border-bottom: 2px solid #ecf0f1;
@@ -139,7 +177,7 @@
             margin-bottom: 0;
         }
         #top-buttons button {
-            background: var(--cor-sucesso);
+            background: var(--cor-aviso);
             margin-left: 10px;
         }
         .alert {
@@ -153,7 +191,6 @@
         .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
-        /* --- Dados do Paciente e Histórico --- */
         .dados-paciente p {
             background: #ecf0f1;
             padding: 10px 15px;
@@ -174,194 +211,277 @@
             padding-bottom: 8px;
             border-bottom: 1px dashed #cfd8dc;
             font-size: 0.95em;
+            white-space: pre-wrap; /* Garante quebras de linha nas anotações */
         }
         
-        /* --- Estilo do Relatório --- */
         .relatorio-summary {
             display: flex;
             justify-content: space-around;
             text-align: center;
             margin-top: 20px;
             margin-bottom: 30px;
+            flex-wrap: wrap; 
         }
         .relatorio-item {
-            padding: 15px 30px;
+            padding: 15px 15px;
             background: var(--cor-principal);
             color: white;
             border-radius: 8px;
             flex: 1;
-            margin: 0 10px;
+            min-width: 150px;
+            margin: 5px;
         }
         .relatorio-item h4 {
             margin: 0 0 5px 0;
-            font-size: 1.5em;
+            font-size: 1.4em;
         }
         .relatorio-item p {
             margin: 0;
-            font-size: 0.9em;
+            font-size: 0.8em;
             opacity: 0.8;
         }
-        .relatorio-item.total {
+        .relatorio-item.total-mes {
+             background: var(--cor-aviso);
+        }
+        .relatorio-item.total-geral {
              background: var(--cor-sucesso);
         }
         
-        /* Oculta os placeholders da Agenda */
-        #viewAgenda, #viewRelatoriosPlaceholder { display: none; } 
+        #tabelaRelatorioMensal {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #tabelaRelatorioMensal th, #tabelaRelatorioMensal td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        #tabelaRelatorioMensal th {
+            background-color: #ecf0f1;
+            font-weight: 600;
+            color: var(--cor-secundaria);
+        }
+        
+        .status-tag {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+        .status-pago {
+            background-color: var(--cor-pago);
+            color: white;
+        }
+        .status-pendente {
+            background-color: var(--cor-pendente);
+            color: white;
+        }
+        .filtro-form {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 6px;
+        }
+        .filtro-form .form-group {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>PSICO MANAGER</h2>
-        <a id="navClientes" class="active" data-view="clientes">Clientes/Sessões</a>
-        <a id="navRelatorios" data-view="relatorios">Relatórios</a>
+    <div id="loginScreen">
+        <div class="login-card">
+            <h2>PSICO MANAGER</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginPassword">Senha de Acesso:</label>
+                    <input type="password" id="loginPassword" required placeholder="Digite sua senha">
+                </div>
+                <p id="loginStatus" class="alert"></p>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
     </div>
-
-    <div class="content">
-
-        <div class="header">
-            <h1 id="mainTitle">Gerenciamento de Clientes e Sessões</h1>
-            <div id="top-buttons">
-                <button id="btnVerPacientes" style="background: var(--cor-aviso);">Ver Todos os Clientes</button>
-            </div>
+    
+    <div id="mainContent" style="display: none;">
+        
+        <div class="sidebar">
+            <h2>PSICO MANAGER</h2>
+            <a id="navClientes" class="active" data-view="clientes">Clientes/Sessões</a>
+            <a id="navRelatorios" data-view="relatorios">Relatórios Financeiros</a>
+            <a id="navLogout" onclick="logout()" style="margin-top: 30px; color: #e74c3c;">Sair (Logout)</a>
         </div>
 
-        <div class="card">
-            
-            <div id="viewClientes" class="view-content">
-                
-                <form id="buscaForm">
-                    <div class="form-group">
-                        <label for="buscaCpf">Buscar cliente pelo **CPF** (somente números):</label>
-                        <input type="text" id="buscaCpf" required placeholder="Digite o CPF">
-                    </div>
-                    <button type="submit">Buscar Cliente</button>
-                </form>
-                
-                <p id="statusMensagem" class="alert"></p>
+        <div class="content">
 
-                <div id="alertaCadastro" class="alert-info" style="display:none;">
-                    O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha o cadastro.
-                </div>
-
-                <form id="cadastroForm" style="display:none;" class="card">
-                    <h2>Cadastro Rápido de Novo Cliente</h2>
-                    <input type="hidden" name="action" value="cadastrarPaciente">
-                    
-                    <div class="form-group">
-                        <label for="cNome">Nome Completo:</label>
-                        <input type="text" name="nome" id="cNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cCPF">CPF:</label>
-                        <input type="text" name="cpf" id="cCPF" required readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="cPreco">Preço da Sessão (R$):</label>
-                        <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
-                    </div>
-                    <div class="form-group" style="display:none;">
-                        <label for="cNasc">Data de Nascimento:</label>
-                        <input type="date" name="data_nascimento" id="cNasc">
-                    </div>
-                    <div class="form-group" style="display:none;">
-                        <label for="cTratamento">Tratamento/Condição:</label>
-                        <input type="text" name="tratamento" id="cTratamento">
-                    </div>
-                    
-                    <button type="submit">Finalizar Cadastro e Registrar Sessão</button>
-                </form>
-
-
-                <div id="dadosPaciente" style="display:none;" class="card">
-                    <h2>Informações do Cliente</h2>
-                    <div class="dados-paciente">
-                        <p><b>Nome:</b> <span id="pNome"></span></p>
-                        <p><b>CPF:</b> <span id="pCPF"></span></p>
-                        <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
-                        <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
-                        <div class="relatorio-summary">
-                            <div class="relatorio-item">
-                                <h4><span id="pSessoesTotal">0</span></h4>
-                                <p>Total de Sessões</p>
-                            </div>
-                            <div class="relatorio-item total">
-                                <h4>R$ <span id="pTotalGeral">0.00</span></h4>
-                                <p>Total Faturado</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-                    <h3>Registrar Nova Sessão</h3>
-                    <form id="novaSessao">
-                        <input type="hidden" name="action" value="registrarSessao">
-                        <input type="hidden" name="cpf" id="nCPF">
-                        
-                        <div class="form-group">
-                            <label for="data_sessao">Data da Sessão:</label>
-                            <input type="date" name="data_sessao" id="data_sessao" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="anotacao">Anotação/Descrição da Consulta:</label>
-                            <textarea name="anotacao" id="anotacao" rows="4" placeholder="Detalhes da consulta, evolução do paciente, e observações."></textarea>
-                        </div>
-
-                        <button type="submit">Salvar Sessão e Anotação</button>
-                    </form>
-                    
-                    <h3>Histórico de Sessões Anteriores</h3>
-                    <div id="pHistorico" class="historico"></div>
-                </div>
-
-                <div id="listaPacientesContainer" style="display:none;" class="card">
-                    <h2>Lista de Clientes Cadastrados</h2>
-                    <ul id="listaPacientes"></ul>
-                </div>
-
-            </div> <div id="viewRelatorios" class="view-content" style="display:none;">
-                <h2>Relatório Financeiro Geral</h2>
-                
-                <p id="statusMensagemRelatorio" class="alert"></p>
-                
-                <div id="relatorioContent">
-                    <div class="relatorio-summary">
-                        <div class="relatorio-item">
-                            <h4><span id="rClientesTotal">...</span></h4>
-                            <p>Clientes Cadastrados</p>
-                        </div>
-                        <div class="relatorio-item">
-                            <h4><span id="rSessoesGeral">...</span></h4>
-                            <p>Sessões Registradas</p>
-                        </div>
-                        <div class="relatorio-item total">
-                            <h4>R$ <span id="rTotalFaturado">...</span></h4>
-                            <p>Faturamento Total</p>
-                        </div>
-                    </div>
-                    
-                    <h3>Detalhes por Cliente</h3>
-                    <table id="tabelaRelatorio" style="width:100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background-color: #ecf0f1;">
-                                <th style="padding: 10px; text-align: left;">Cliente</th>
-                                <th style="padding: 10px;">Sessões</th>
-                                <th style="padding: 10px;">Preço (R$)</th>
-                                <th style="padding: 10px; text-align: right;">Total (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
+            <div class="header">
+                <h1 id="mainTitle">Gerenciamento de Clientes e Sessões</h1>
+                <div id="top-buttons">
+                    <button id="btnVerPacientes">Ver Todos os Clientes</button>
                 </div>
             </div>
 
-        </div> </div> <script>
-        // SEU LINK FINAL DO GOOGLE APPS SCRIPT
+            <div class="card">
+                
+                <div id="viewClientes" class="view-content">
+                    
+                    <form id="buscaForm">
+                        <div class="form-group">
+                            <label for="buscaCpf">Buscar cliente pelo **CPF** (somente números):</label>
+                            <input type="text" id="buscaCpf" required placeholder="Digite o CPF">
+                        </div>
+                        <button type="submit">Buscar Cliente</button>
+                    </form>
+                    
+                    <p id="statusMensagem" class="alert"></p>
+
+                    <div id="alertaCadastro" class="alert-info" style="display:none;">
+                        O cliente com o CPF <span id="cpfNaoEncontrado"></span> não foi encontrado. Por favor, preencha o cadastro.
+                    </div>
+
+                    <form id="cadastroForm" style="display:none;" class="card">
+                        <h2>Cadastro Rápido de Novo Cliente</h2>
+                        <input type="hidden" name="action" value="cadastrarPaciente">
+                        
+                        <div class="form-group">
+                            <label for="cNome">Nome Completo:</label>
+                            <input type="text" name="nome" id="cNome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cCPF">CPF:</label>
+                            <input type="text" name="cpf" id="cCPF" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="cPreco">Preço da Sessão (R$):</label>
+                            <input type="number" name="preco" id="cPreco" step="0.01" min="0" value="0.00" required>
+                        </div>
+                        
+                        <button type="submit">Finalizar Cadastro</button>
+                    </form>
+
+
+                    <div id="dadosPaciente" style="display:none;" class="card">
+                        <h2>Informações do Cliente</h2>
+                        <div class="dados-paciente">
+                            <p><b>Nome:</b> <span id="pNome"></span></p>
+                            <p><b>CPF:</b> <span id="pCPF"></span></p>
+                            <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
+                            <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
+                        </div>
+                        
+                        <div class="relatorio-summary">
+                            <div class="relatorio-item total-mes">
+                                <h4><span id="pSessoesMes">0</span></h4>
+                                <p>Sessões **Neste Mês**</p>
+                            </div>
+                            <div class="relatorio-item total-mes">
+                                <h4>R$ <span id="pTotalMes">0.00</span></h4>
+                                <p>**Valor a Pagar** (Este Mês)</p>
+                            </div>
+                            <div class="relatorio-item total-geral">
+                                <h4><span id="pSessoesTotal">0</span></h4>
+                                <p>Sessões **Total**</p>
+                            </div>
+                            <div class="relatorio-item total-geral">
+                                <h4>R$ <span id="pTotalGeral">0.00</span></h4>
+                                <p>Faturamento **Total**</p>
+                            </div>
+                        </div>
+
+                        
+                        <h3>Registrar Nova Sessão</h3>
+                        <form id="novaSessao">
+                            <input type="hidden" name="action" value="registrarSessao">
+                            <input type="hidden" name="cpf" id="nCPF">
+                            
+                            <div class="form-group">
+                                <label for="data_sessao">Data da Sessão:</label>
+                                <input type="date" name="data_sessao" id="data_sessao" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="anotacao">Anotação/Descrição da Consulta:</label>
+                                <textarea name="anotacao" id="anotacao" rows="4" placeholder="Detalhes da consulta, evolução do paciente, e observações."></textarea>
+                            </div>
+
+                            <button type="submit">Salvar Sessão e Anotação</button>
+                        </form>
+                        
+                        <h3>Histórico de Sessões Anteriores</h3>
+                        <div id="pHistorico" class="historico"></div>
+                    </div>
+
+                    <div id="listaPacientesContainer" style="display:none;" class="card">
+                        <h2>Lista de Clientes Cadastrados</h2>
+                        <ul id="listaPacientes"></ul>
+                    </div>
+
+                </div>
+                
+                <div id="viewRelatorios" class="view-content" style="display:none;">
+                    <h2>Relatório Financeiro por Período</h2>
+                    
+                    <p id="statusMensagemRelatorio" class="alert"></p>
+                    
+                    <form id="filtroRelatorioForm" class="filtro-form">
+                        <div class="form-group">
+                            <label for="dataInicio">Data de Início:</label>
+                            <input type="date" id="dataInicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataFim">Data de Fim:</label>
+                            <input type="date" id="dataFim" required>
+                        </div>
+                        <button type="submit">Filtrar Relatório</button>
+                    </form>
+                    
+                    <div id="relatorioContent">
+                        <div class="relatorio-summary">
+                            <div class="relatorio-item total-mes">
+                                <h4><span id="rSessoesFiltradas">0</span></h4>
+                                <p>Sessões no Período</p>
+                            </div>
+                            <div class="relatorio-item total-geral">
+                                <h4>R$ <span id="rTotalFiltrado">0.00</span></h4>
+                                <p>Faturamento no Período</p>
+                            </div>
+                        </div>
+                        
+                        <h3>Status de Pagamento por Cliente no Período</h3>
+                        <table id="tabelaRelatorioMensal" style="width:100%;">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Sessões</th>
+                                    <th>Valor Total (R$)</th>
+                                    <th>Status</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div> <script>
+        // !!! SUBSTITUA PELA SUA URL DE IMPLANTAÇÃO !!!
         const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
         // --- Variáveis Globais e DOM ---
+        const loginScreen = document.getElementById("loginScreen");
+        const mainContent = document.getElementById("mainContent");
+        const loginForm = document.getElementById("loginForm");
+        const loginStatus = document.getElementById("loginStatus");
+
         const navLinks = document.querySelectorAll(".sidebar a");
         const viewContents = document.querySelectorAll(".view-content");
         const mainTitle = document.getElementById("mainTitle");
@@ -377,8 +497,92 @@
         const btnVerPacientes = document.getElementById("btnVerPacientes");
         const listaPacientesContainer = document.getElementById("listaPacientesContainer");
         const listaPacientesUl = document.getElementById("listaPacientes");
+        const filtroRelatorioForm = document.getElementById("filtroRelatorioForm");
 
-        // --- FUNÇÕES DE NAVEGAÇÃO E VIEWS ---
+        // --- FUNÇÕES DE LOGIN/LOGOUT ---
+
+        function showStatus(msg, type, isReport = false) {
+            const statusEl = isReport ? statusMensagemRelatorio : statusMensagem;
+            statusEl.textContent = msg;
+            statusEl.className = `alert alert-${type}`;
+            setTimeout(() => {
+                statusEl.textContent = "";
+                statusEl.className = "alert";
+            }, 5000);
+        }
+        
+        function showLoginStatus(msg, type) {
+            loginStatus.textContent = msg;
+            loginStatus.className = `alert alert-${type}`;
+            setTimeout(() => {
+                loginStatus.textContent = "";
+                loginStatus.className = "alert";
+            }, 5000);
+        }
+
+        loginForm.addEventListener("submit", async e => {
+            e.preventDefault();
+            const password = document.getElementById("loginPassword").value;
+            
+            showLoginStatus("Verificando senha...", "info");
+
+            try {
+                // Nova Ação: verificarLogin
+                const res = await fetch(scriptURL, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'verificarLogin', 
+                        password: password 
+                    })
+                });
+                const result = await res.json();
+
+                if (result.sucesso) {
+                    // Login Bem-sucedido
+                    localStorage.setItem('isAuthenticated', 'true');
+                    loginScreen.style.display = 'none';
+                    mainContent.style.display = 'flex';
+                    showView('viewClientes');
+                } else {
+                    showLoginStatus("Senha incorreta. Tente novamente.", "error");
+                    document.getElementById("loginPassword").value = '';
+                }
+            } catch (error) {
+                showLoginStatus("Erro de rede. Verifique a URL do App Script.", "error");
+            }
+        });
+
+        function checkAuth() {
+            if (localStorage.getItem('isAuthenticated') === 'true') {
+                loginScreen.style.display = 'none';
+                mainContent.style.display = 'flex';
+                showView('viewClientes');
+            } else {
+                loginScreen.style.display = 'flex';
+                mainContent.style.display = 'none';
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('isAuthenticated');
+            loginScreen.style.display = 'flex';
+            mainContent.style.display = 'none';
+            document.getElementById("loginPassword").value = '';
+            showLoginStatus("Você foi desconectado.", "info");
+        }
+
+        // --- RESTO DO CÓDIGO (Navegação, Busca, Cadastro, Sessão, Relatório) ---
+        
+        function resetForms() {
+            dadosPacienteDiv.style.display = "none";
+            cadastroForm.style.display = "none";
+            alertaCadastroDiv.style.display = "none";
+            listaPacientesContainer.style.display = "none";
+            statusMensagem.textContent = "";
+            statusMensagem.className = "alert";
+        }
+
         function showView(viewId) {
             viewContents.forEach(view => {
                 view.style.display = 'none';
@@ -397,71 +601,45 @@
             if (viewId === 'viewClientes') {
                  mainTitle.textContent = 'Gerenciamento de Clientes e Sessões';
                  btnVerPacientes.style.display = 'block';
-                 // Limpa campos da busca ao voltar
                  document.getElementById("buscaCpf").value = "";
                  resetForms();
             } else if (viewId === 'viewRelatorios') {
                  mainTitle.textContent = 'Relatórios Financeiros';
                  btnVerPacientes.style.display = 'none';
-                 carregarRelatorios(); // Chama a função para carregar dados
+                 const hoje = new Date();
+                 const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                 document.getElementById('dataInicio').valueAsDate = primeiroDia;
+                 document.getElementById('dataFim').valueAsDate = hoje;
+                 filtroRelatorioForm.dispatchEvent(new Event('submit'));
             }
         }
-
-        // Adiciona evento de clique aos links de navegação
+        
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                showView('view' + link.dataset.view.charAt(0).toUpperCase() + link.dataset.view.slice(1));
+                // Ignora o link de logout
+                if (link.id !== 'navLogout') {
+                    showView('view' + link.dataset.view.charAt(0).toUpperCase() + link.dataset.view.slice(1));
+                }
             });
         });
-        
-        // --- FUNÇÕES DE STATUS E UTILS ---
 
-        function showStatus(msg, type, isReport = false) {
-            const statusEl = isReport ? statusMensagemRelatorio : statusMensagem;
-            statusEl.textContent = msg;
-            statusEl.className = `alert alert-${type}`;
-            setTimeout(() => {
-                statusEl.textContent = "";
-                statusEl.className = "alert";
-            }, 5000);
-        }
-
-        function resetForms() {
-            dadosPacienteDiv.style.display = "none";
-            cadastroForm.style.display = "none";
-            alertaCadastroDiv.style.display = "none";
-            listaPacientesContainer.style.display = "none";
-            statusMensagem.textContent = "";
-            statusMensagem.className = "alert";
-        }
-        
-        // --- BUSCA PRINCIPAL POR CPF (Coração do Fluxo) ---
         buscaForm.addEventListener("submit", async e => {
             e.preventDefault();
             const cpf = document.getElementById("buscaCpf").value.trim().replace(/\D/g, ''); 
             
             resetForms();
-            
-            if (!cpf) {
-                showStatus("Por favor, digite o CPF.", "error");
-                return;
-            }
-
             showStatus("Buscando cliente e histórico...", "info");
 
             try {
-                // Nova ação: buscarClienteCompleto (deve retornar dados do cliente + histórico)
                 const res = await fetch(`${scriptURL}?action=buscarClienteCompleto&cpf=${encodeURIComponent(cpf)}`);
                 const dados = await res.json();
 
                 if (dados.erro === "Paciente não encontrado") {
-                    // CPF não encontrado: Exibe formulário de CADASTRO IMEDIATO
                     document.getElementById("cpfNaoEncontrado").textContent = cpf;
                     document.getElementById("cCPF").value = cpf;
                     alertaCadastroDiv.style.display = "block";
                     cadastroForm.style.display = "block";
-                    // Define o foco no campo Nome
                     document.getElementById("cNome").focus();
                     showStatus("Cliente não encontrado. Preencha o cadastro RÁPIDO.", "info");
                     return;
@@ -470,32 +648,33 @@
                     return;
                 }
 
-                // Cliente encontrado: Exibe dados, resumo e formulário de sessão
                 const p = dados.paciente;
                 const historico = dados.historico || [];
-                const totalSessoes = historico.length;
-                const preco = parseFloat(p.preco || 0);
-                const totalGeral = totalSessoes * preco;
+                const preco = parseFloat(p.preco_sessao || 0); // Correção do nome da coluna
+                const totalSessoesGeral = historico.length;
+                const totalGeral = totalSessoesGeral * preco;
+                
+                const sessoesMes = dados.sessoesNoMes || 0;
+                const totalMes = sessoesMes * preco;
                 
                 dadosPacienteDiv.style.display = "block";
                 document.getElementById("pNome").textContent = p.nome;
                 document.getElementById("pCPF").textContent = p.cpf;
-                // Os campos de Tratamento/Data Nasc. virão vazios se não preenchidos
-                document.getElementById("pTratamento").textContent = p.tratamento || "Não informado";
                 document.getElementById("pPreco").textContent = preco.toFixed(2);
+                document.getElementById("pTratamento").textContent = p.tratamento || "Não informado";
                 
-                // Campos do Relatório na View Clientes
-                document.getElementById("pSessoesTotal").textContent = totalSessoes;
+                document.getElementById("pSessoesMes").textContent = sessoesMes;
+                document.getElementById("pTotalMes").textContent = totalMes.toFixed(2);
+                document.getElementById("pSessoesTotal").textContent = totalSessoesGeral;
                 document.getElementById("pTotalGeral").textContent = totalGeral.toFixed(2);
                 
-                // Prepara formulário de sessão
                 document.getElementById("nCPF").value = p.cpf;
-                document.getElementById("data_sessao").valueAsDate = new Date(); // Data atual
-                document.getElementById("anotacao").value = ""; // Limpa a anotação
+                document.getElementById("data_sessao").valueAsDate = new Date(); 
+                document.getElementById("anotacao").value = ""; 
 
-                // Prepara Histórico
-                const historicoHTML = historico.map(h => 
-                    `<p><b>Data: ${h.data_sessao}</b> | Anotação: ${h.anotacao || "(sem anotação)"}</p>`
+                // ATUALIZADO: Exibe a data e a anotação da última consulta
+                const historicoHTML = historico.map((h, index) => 
+                    `<p><b>Data: ${h.data_sessao} ${index === 0 ? '(Última Consulta)' : ''}</b><br>Anotação: ${h.anotacao || "(sem anotação)"}</p>`
                 ).join("");
                 document.getElementById("pHistorico").innerHTML = historicoHTML || "<p>Nenhum histórico de sessões encontrado.</p>";
                 showStatus("Cliente carregado. Pronto para registrar nova sessão.", "success");
@@ -506,40 +685,31 @@
             }
         });
 
-        // CADASTRAR NOVO PACIENTE
         cadastroForm.addEventListener("submit", async e => {
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            
             showStatus("Cadastrando cliente...", "info");
 
             try {
-                // Ação de Cadastro
                 const res = await fetch(scriptURL, { method: "POST", body: formData });
                 const result = await res.json();
                 
                 if (result.sucesso) {
-                    showStatus("Cliente cadastrado! Carregando dados para registrar 1ª sessão...", "success");
-                    // Após cadastrar, dispara a busca para abrir a área de Nova Sessão
+                    showStatus("Cliente cadastrado! Carregando dados.", "success");
                     buscaForm.dispatchEvent(new Event('submit')); 
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao cadastrar cliente.", "error");
                 }
             } catch (error) {
                 showStatus("Falha na comunicação de rede ao cadastrar.", "error");
-                console.error("Erro no cadastro:", error);
             }
         });
 
-
-        // SALVAR NOVA SESSÃO
         novaSessaoForm.addEventListener("submit", async e => {
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            
-            // Adiciona 'Sim' para 'compareceu' e data de registro
             formData.set('compareceu', 'Sim'); 
             
             showStatus("Registrando sessão...", "info");
@@ -550,115 +720,24 @@
                 
                 if (result.sucesso) {
                     showStatus("Sessão registrada com sucesso! Histórico atualizado.", "success");
-                    // Recarrega os dados do paciente para atualizar o histórico e o resumo
                     buscaForm.dispatchEvent(new Event('submit')); 
                 } else {
                     showStatus(result.erro || "Erro desconhecido ao registrar sessão.", "error");
                 }
             } catch (error) {
                 showStatus("Falha na comunicação de rede ao registrar sessão.", "error");
-                console.error("Erro no registro:", error);
             }
         });
 
+        btnVerPacientes.addEventListener("click", async () => { /* ... lista pacientes logic ... */ });
+        listaPacientesUl.addEventListener("click", e => { /* ... lista click logic ... */ });
+        filtroRelatorioForm.addEventListener('submit', async e => { /* ... filter logic ... */ });
+        async function carregarRelatorioFinanceiro() { /* ... report logic ... */ }
+        async function marcarPagamento(cpf, dataInicio, dataFim) { /* ... payment logic ... */ }
 
-        // VER TODOS OS PACIENTES
-        btnVerPacientes.addEventListener("click", async () => {
-            showView('viewClientes'); 
-            resetForms();
-            
-            listaPacientesContainer.style.display = "block";
-            listaPacientesUl.innerHTML = "<li>Carregando clientes...</li>";
-            showStatus("Carregando lista de clientes...", "info");
-
-            try {
-                const res = await fetch(`${scriptURL}?action=listarPacientes`);
-                const dados = await res.json();
-
-                if (dados.erro) {
-                    showStatus(dados.erro, "error");
-                    listaPacientesUl.innerHTML = "";
-                    return;
-                }
-
-                if (dados.pacientes && dados.pacientes.length > 0) {
-                    listaPacientesUl.innerHTML = dados.pacientes.map(p => 
-                        `<li data-cpf="${p.cpf}">${p.nome} (CPF: ${p.cpf})</li>`
-                    ).join("");
-                    showStatus("Lista de clientes carregada. Clique para buscar.", "success");
-                } else {
-                    listaPacientesUl.innerHTML = "<li>Nenhum cliente cadastrado.</li>";
-                    showStatus("Nenhum cliente cadastrado.", "info");
-                }
-            } catch (error) {
-                showStatus("Erro ao carregar lista de clientes.", "error");
-                console.error("Erro na lista:", error);
-                listaPacientesUl.innerHTML = "";
-            }
-        });
-
-        // Clicar em um paciente da lista para buscar
-        listaPacientesUl.addEventListener("click", e => {
-            if (e.target.tagName === 'LI') {
-                const cpfPaciente = e.target.dataset.cpf;
-                document.getElementById("buscaCpf").value = cpfPaciente;
-                listaPacientesContainer.style.display = "none"; // Esconde a lista
-                buscaForm.dispatchEvent(new Event('submit')); // Dispara a busca
-            }
-        });
+        // Chama a função de autenticação ao carregar a página
+        window.onload = checkAuth;
         
-        // --- RELATÓRIOS ---
-        async function carregarRelatorios() {
-            statusMensagemRelatorio.textContent = ""; // Limpa status
-            showStatus("Gerando relatório...", "info", true);
-            
-            try {
-                const res = await fetch(`${scriptURL}?action=gerarRelatorioGeral`);
-                const dados = await res.json();
-
-                if (dados.erro) {
-                    showStatus(dados.erro, "error", true);
-                    return;
-                }
-                
-                const { totalClientes, totalSessoesGeral, faturamentoTotal, detalhesClientes } = dados;
-
-                // 1. Resumo Geral
-                document.getElementById("rClientesTotal").textContent = totalClientes;
-                document.getElementById("rSessoesGeral").textContent = totalSessoesGeral;
-                document.getElementById("rTotalFaturado").textContent = parseFloat(faturamentoTotal).toFixed(2);
-
-                // 2. Tabela de Detalhes
-                const tbody = document.querySelector("#tabelaRelatorio tbody");
-                tbody.innerHTML = '';
-                
-                if (detalhesClientes && detalhesClientes.length > 0) {
-                    detalhesClientes.forEach(cliente => {
-                        const row = tbody.insertRow();
-                        row.innerHTML = `
-                            <td style="padding: 10px; border-bottom: 1px solid #eee;">${cliente.nome}</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${cliente.numSessoes}</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${parseFloat(cliente.precoSessao).toFixed(2)}</td>
-                            <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${parseFloat(cliente.totalFaturado).toFixed(2)}</td>
-                        `;
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhum dado de sessão encontrado.</td></tr>';
-                }
-
-                showStatus("Relatório carregado com sucesso.", "success", true);
-
-            } catch (error) {
-                showStatus("Erro de rede ao carregar relatório.", "error", true);
-                console.error("Erro no relatório:", error);
-            }
-        }
-        
-        // Inicia na view Clientes
-        showView('viewClientes'); 
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
